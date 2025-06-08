@@ -33,4 +33,6 @@ This project provides an MCP server that interacts with Dash docsets.
   `Dash` directory instead of `DocSets`.
 - The log file now includes startup and shutdown messages and records any unexpected errors.
 
+- Review [CHANGELOG.md](../CHANGELOG.md) for a summary of recent releases.
+
 For more detailed usage, see [server_usage.md](server_usage.md).
