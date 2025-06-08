@@ -13,10 +13,10 @@
   "server": {
     "command": "python3",
     "args": [
-      "~/Dropbox/programming/projects/mcp-servers/enhanced-dash-mcp/enhanced_dash_server.py"
+      "/Users/joshpeterson/Dropbox/programming/projects/mcp-servers/enhanced-dash-mcp/enhanced_dash_server.py"
     ],
     "env": {},
-    "cwd": "~/Dropbox/programming/projects/mcp-servers/enhanced-dash-mcp"
+    "cwd": "/Users/joshpeterson/Dropbox/programming/projects/mcp-servers/enhanced-dash-mcp"
   },
   "tools": [
     {
@@ -218,7 +218,7 @@
     ]
   },
   "development": {
-    "local_path": "~/Dropbox/programming/projects/mcp-servers/enhanced-dash-mcp",
+    "local_path": "/Users/joshpeterson/Dropbox/programming/projects/mcp-servers/enhanced-dash-mcp",
     "environment": "Python virtual environment with dependencies",
     "startup_scripts": ["start-dash-mcp.sh", "start-dash-mcp-tmux.sh"],
     "aliases": [

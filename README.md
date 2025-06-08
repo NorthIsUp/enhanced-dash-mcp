@@ -1,6 +1,6 @@
 # Enhanced Dash MCP Server
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
@@ -421,3 +421,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 **Built with ❤️ in Fort Collins, CO for developers who value efficient, intelligent documentation access.**
 
 _Transform your development workflow with context-aware documentation that understands your project and coding patterns._
+
+## 📚 Further Reading
+
+- [Changelog and CI](docs/changelog_and_ci.md)
+- [Server Usage](docs/server_usage.md)
