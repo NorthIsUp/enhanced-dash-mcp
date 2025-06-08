@@ -102,7 +102,8 @@ Author: Josh (Fort Collins, CO)
 Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
-__version__ = "1.1.2"  # Project version for SemVer and CHANGELOG automation
+# Bump version after updating docs and tests to clarify stdio_server usage
+__version__ = "1.1.3"  # Project version for SemVer and CHANGELOG automation
 
 import sqlite3
 import os
