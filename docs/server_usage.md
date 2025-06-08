@@ -1,7 +1,8 @@
 # Running the Enhanced Dash MCP Server
 
-The server communicates over standard input and output. Ensure you run the
-script using the provided `StdioClient` so that MCP clients can connect
+The server communicates over standard input and output. It uses the
+`stdio_server` context manager from the MCP library to expose its streams
+for MCP clients.
 correctly.
 
 Example:
@@ -13,8 +14,8 @@ python3 enhanced_dash_server.py
 This invocation wires the server to STDIO internally and requires no
 additional parameters.
 
-Since version 1.1.1 the main script automatically creates a `StdioClient` and
-passes its streams to `server.run()`. This prevents errors like:
+Since version 1.1.2 the main script uses `stdio_server` to obtain read and
+write streams for `server.run()`. This prevents errors like:
 
 ```
 TypeError: Server.run() missing 3 required positional arguments
