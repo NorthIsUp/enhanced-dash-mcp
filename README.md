@@ -1,9 +1,10 @@
 # Enhanced Dash MCP Server
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 An intelligent Model Context Protocol (MCP) server that transforms your local Dash documentation into a powerful, context-aware assistant for Claude. Built for developers who want seamless access to documentation while coding.
 
