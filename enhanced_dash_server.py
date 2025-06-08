@@ -103,7 +103,7 @@ Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
-__version__ = "1.1.9"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.1.10"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
@@ -1244,6 +1244,7 @@ async def rate_limited_call_tool(name, arguments):
 
 async def _cancel_task(task: asyncio.Task) -> None:
     """Cancel a task and wait for it to finish."""
+    # Centralizes task cancellation to prevent duplicate cleanup logic
     task.cancel()
     with contextlib.suppress(asyncio.CancelledError):
         await task
@@ -1259,6 +1260,7 @@ async def main() -> None:
             await server_task
         except asyncio.CancelledError:
             await _cancel_task(server_task)
+            return
         except KeyboardInterrupt:
             await _cancel_task(server_task)
             return
