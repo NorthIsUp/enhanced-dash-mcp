@@ -82,9 +82,9 @@ sys.modules["aiohttp"] = stub_aiohttp
 
 spec = importlib.util.spec_from_file_location("enhanced_dash_server", MODULE_PATH)
 assert spec and spec.loader
-server = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(server)
-main = server.main
+srv_mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(srv_mod)
+main = srv_mod.main
 
 from contextlib import asynccontextmanager
 
@@ -111,10 +111,23 @@ async def dummy_run(self, _r, _w, _o, **_kwargs):
 @pytest.mark.asyncio
 async def test_main_handles_cancelled(monkeypatch) -> None:
     """Main should exit cleanly when cancelled."""
-    monkeypatch.setattr(server, "stdio_server", dummy_stdio_server)
-    monkeypatch.setattr(server, "server", type("dummy", (), {"run": dummy_run})())
+    monkeypatch.setattr(srv_mod, "stdio_server", dummy_stdio_server)
+    monkeypatch.setattr(srv_mod, "server", type("dummy", (), {"run": dummy_run})())
     task = asyncio.create_task(main())
     await asyncio.sleep(0.1)
     task.cancel()
     result = await task
+    assert result is None
+
+
+@pytest.mark.asyncio
+async def test_main_handles_keyboard_interrupt(monkeypatch) -> None:
+    """Main should return cleanly when server.run raises KeyboardInterrupt."""
+    monkeypatch.setattr(srv_mod, "stdio_server", dummy_stdio_server)
+
+    async def raise_interrupt(_r, _w, _o, **_kwargs) -> None:
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(srv_mod, "server", type("dummy", (), {"run": raise_interrupt})())
+    result = await main()
     assert result is None

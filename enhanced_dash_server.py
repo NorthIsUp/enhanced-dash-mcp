@@ -103,20 +103,20 @@ Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
-__version__ = "1.1.8"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.1.9"  # Project version for SemVer and CHANGELOG automation
 
-import sqlite3
-import os
 import asyncio
-import json
-import time
-import re
 import contextlib
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass
-from urllib.parse import urlparse
 import hashlib
+import json
+import os
+import re
+import sqlite3
+import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
 from mcp.server import Server
 from mcp.types import Tool, TextContent
@@ -1253,7 +1253,7 @@ async def main() -> None:
     """Run the server with STDIO streams and handle cancellation."""
     async with stdio_server() as (read_stream, write_stream):
         server_task = asyncio.create_task(
-            server.run(read_stream, write_stream, {})
+            server.run(read_stream, write_stream, {})  # type: ignore[arg-type]
         )
         try:
             await server_task
@@ -1261,7 +1261,7 @@ async def main() -> None:
             await _cancel_task(server_task)
         except KeyboardInterrupt:
             await _cancel_task(server_task)
-            raise
+            return
 
 
 if __name__ == "__main__":

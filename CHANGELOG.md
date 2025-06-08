@@ -1,4 +1,8 @@
 # Changelog
+## [1.1.9](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.1.9) - 2025-06-08
+### Fixed
+- suppress KeyboardInterrupt traceback to prevent hanging
+
 ## [1.1.8](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.1.8) - 2025-06-08
 ### Fixed
 - extracted cancellation logic into a helper to avoid duplication
