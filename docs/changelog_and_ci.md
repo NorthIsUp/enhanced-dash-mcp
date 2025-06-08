@@ -12,7 +12,7 @@ Developers should not manually edit `CHANGELOG.md`; instead, write Conventional 
 
 ## Release Workflow
 
-When a new Git tag matching `v*.*.*` is pushed to `main`, a separate workflow
+When a new Git tag matching `v[0-9]+\.[0-9]+\.[0-9]+` is pushed to `main`, a separate workflow
 creates a GitHub release with notes derived from the changelog. This keeps
 published versions in sync with the changelog and provides a convenient
 download link for each release.
