@@ -104,7 +104,7 @@ Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
 # Increment version for improved error logging
-__version__ = "1.2.3"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.2.4"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
@@ -1042,10 +1042,19 @@ async def call_tool(name, arguments):
             if not arguments.get("query"):
                 raise ValueError("Query parameter is required")
 
+            raw_limit = arguments.get("limit", 20)
+            try:
+                # Cast provided limit to int to avoid slice errors
+                limit = int(float(raw_limit))
+            except (TypeError, ValueError):
+                raise ValueError("limit must be an integer")
+
+            limit = max(1, min(100, limit))  # Enforce limits within range
+
             results = await dash_server.search_docset(
                 query=arguments["query"],
                 docset_name=arguments.get("docset"),
-                limit=max(1, min(100, arguments.get("limit", 20))),  # Enforce limits
+                limit=limit,
                 include_content=arguments.get("include_content", False),
                 use_fuzzy=arguments.get("use_fuzzy", True),
             )
