@@ -5,7 +5,7 @@ This project provides an MCP server that interacts with Dash docsets.
 - Run the server with `python3 enhanced_dash_server.py`. The script uses
   `stdio_server` internally to expose STDIO streams. Press `Ctrl+C` to
   stop the server gracefully without seeing a stack trace. Since version
-   1.2.7 the server logs startup, shutdown, and unexpected error events, and cancels its tasks properly so startup no longer hangs
+   1.2.8 the server logs startup, shutdown, and unexpected error events, and cancels its tasks properly so startup no longer hangs
   when interrupted. Cancellation for `Ctrl+C` and task timeouts now
   share a single code path via `_cancel_task`.
 - Initialization options are now generated with

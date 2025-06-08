@@ -1,4 +1,8 @@
 # Changelog
+## [1.2.8](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.8) - 2025-06-08
+- fix: handle symlinked DocSets paths more robustly
+- test: add coverage for symlinked DocSets environment variable
+
 ## [1.2.7](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.7) - 2025-06-08
 - feat: automatically adjust docset path when DASH_DOCSETS_PATH points to Dash directory or symlink
 
