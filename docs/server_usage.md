@@ -22,3 +22,6 @@ TypeError: Server.run() missing 3 required positional arguments
 ```
 
 Just run the script directly and the server will wire itself to STDIO.
+Press `Ctrl+C` to stop the server gracefully; the program handles
+`KeyboardInterrupt` without printing a stack trace. Version 1.1.6 fixes
+an issue where the server could hang during startup when interrupted.

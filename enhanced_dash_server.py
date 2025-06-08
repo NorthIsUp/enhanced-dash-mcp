@@ -103,7 +103,7 @@ Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
-__version__ = "1.1.4"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.1.6"  # Project version for SemVer and CHANGELOG automation
 
 import sqlite3
 import os
@@ -111,6 +111,7 @@ import asyncio
 import json
 import time
 import re
+import contextlib
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
@@ -764,7 +765,7 @@ class ProjectAwareDocumentationServer:
 
 
 # Initialize servers
-server = Server("dash-docs-enhanced")
+server: Server = Server("dash-docs-enhanced")
 dash_server = DashMCPServer()
 project_server = ProjectAwareDocumentationServer(dash_server)
 
@@ -1242,9 +1243,15 @@ async def rate_limited_call_tool(name, arguments):
 
 
 async def main() -> None:
-    """Run the server with STDIO streams."""
+    """Run the server with STDIO streams and handle cancellation."""
     async with stdio_server() as (read_stream, write_stream):
-        await server.run(read_stream, write_stream, {})
+        task = asyncio.create_task(server.run(read_stream, write_stream, {}))
+        try:
+            await task
+        except (asyncio.CancelledError, KeyboardInterrupt):
+            task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await task
 
 
 if __name__ == "__main__":
