@@ -1,6 +1,6 @@
 # Enhanced Dash MCP Server
 
-![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.2-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
@@ -71,6 +71,8 @@ The setup script automatically installs all required dependencies, including:
 - `typing-extensions>=4.12.0` - Extended type hints
 
 ## ⚡ Quick Start
+
+See [docs/help.md](docs/help.md) for a brief overview of how to run the server.
 
 ### 1. **Clone & Setup**
 

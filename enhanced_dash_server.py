@@ -102,7 +102,7 @@ Author: Josh (Fort Collins, CO)
 Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
-__version__ = "1.1.1"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.1.2"  # Project version for SemVer and CHANGELOG automation
 
 import sqlite3
 import os
@@ -118,7 +118,7 @@ import hashlib
 
 from mcp.server import Server
 from mcp.types import Tool, TextContent
-from mcp.streams import StdioClient  # Used to wire server I/O to STDIO
+from mcp.server.stdio import stdio_server  # Provides STDIO streams for Server.run
 from bs4 import BeautifulSoup
 from fuzzywuzzy import fuzz, process
 import aiofiles
@@ -1240,8 +1240,12 @@ async def rate_limited_call_tool(name, arguments):
     return await call_tool(name, arguments)
 
 
+async def main() -> None:
+    """Run the server with STDIO streams."""
+    async with stdio_server() as (read_stream, write_stream):
+        await server.run(read_stream, write_stream, {})
+
+
 if __name__ == "__main__":
-    # Create a StdioClient so Server.run receives the required streams.
-    # This avoids `TypeError` about missing read/write stream arguments.
-    client = StdioClient()
-    asyncio.run(server.run(client.read_stream, client.write_stream, {}))
+    # Run the server using asyncio and stdio_server for stream wiring
+    asyncio.run(main())

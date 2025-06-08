@@ -4,21 +4,18 @@ from pathlib import Path
 FILE_PATH = Path(__file__).resolve().parents[1] / "enhanced_dash_server.py"
 
 
-def test_stdio_client_used():
-    """Ensure the main section wires the server with StdioClient."""
-    lines = FILE_PATH.read_text().splitlines()
-    snippet = "\n".join(lines[-5:])
-    assert "StdioClient" in snippet, "StdioClient not used"
-    assert "server.run" in snippet, "server.run call missing"
-    assert "client.read_stream" in snippet, "read stream not passed"
-    assert "client.write_stream" in snippet, "write stream not passed"
-
+def test_async_stdio_server_used():
+    """Ensure the async main coroutine wires `server.run` with stdio_server."""
+    content = FILE_PATH.read_text()
+    assert "stdio_server" in content, "stdio_server not referenced"
+    pattern = re.compile(
+        r"server\.run\(\s*read_stream\s*,\s*write_stream\s*,\s*(\{\}|dict\(\))\s*\)"
+    )
+    assert pattern.search(content), "server.run call with streams missing or incorrectly formatted"
 
 
 def test_asyncio_run_invocation():
-    """Ensure asyncio.run wraps server.run with all required arguments."""
+    """Ensure asyncio.run wraps main coroutine."""
     content = FILE_PATH.read_text()
-    pattern = re.compile(r"asyncio\.run\(server\.run\(.*client\.read_stream.*client\.write_stream.*\{\}\)\)")
+    pattern = re.compile(r"asyncio\.run\(main\(\)\)")
     assert pattern.search(content), "asyncio.run invocation malformed"
-
-
