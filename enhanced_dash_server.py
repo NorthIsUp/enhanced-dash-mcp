@@ -104,7 +104,7 @@ Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
 # Increment version for improved error logging
-__version__ = "1.2.2"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.2.3"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
@@ -1280,10 +1280,11 @@ async def main() -> None:
     # Log startup so users know the server is running
     logger.info("Enhanced Dash MCP server starting (logs: %s)", LOG_FILE)
     async with stdio_server() as (read_stream, write_stream):
+        init_options = server.create_initialization_options()
         server_task = asyncio.create_task(
             # stdio_server provides untyped streams that satisfy the expected
             # asyncio.StreamReader/StreamWriter interface
-            server.run(read_stream, write_stream, {})  # type: ignore[arg-type]
+            server.run(read_stream, write_stream, init_options)
         )
         try:
             await server_task
