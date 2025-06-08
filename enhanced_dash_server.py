@@ -118,13 +118,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import urlparse
 
-from mcp.server import Server
-from mcp.types import Tool, TextContent
-from mcp.server.stdio import stdio_server  # Provides STDIO streams for Server.run
-from bs4 import BeautifulSoup
-from fuzzywuzzy import fuzz, process
 import aiofiles
 import aiohttp
+from bs4 import BeautifulSoup
+from fuzzywuzzy import fuzz, process
+from mcp.server import Server
+from mcp.server.stdio import stdio_server  # Provides STDIO streams for Server.run
+from mcp.types import Tool, TextContent
 
 
 @dataclass
@@ -1258,10 +1258,7 @@ async def main() -> None:
         )
         try:
             await server_task
-        except asyncio.CancelledError:
-            await _cancel_task(server_task)
-            return
-        except KeyboardInterrupt:
+        except (asyncio.CancelledError, KeyboardInterrupt):
             await _cancel_task(server_task)
             return
 

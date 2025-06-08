@@ -25,3 +25,5 @@ Just run the script directly and the server will wire itself to STDIO.
 Press `Ctrl+C` to stop the server gracefully; the program handles
 `KeyboardInterrupt` without printing a stack trace. Version 1.1.10 fixes
 an issue where the server could hang during startup when interrupted.
+Both `KeyboardInterrupt` and internal cancellations use the same
+`_cancel_task` helper to ensure consistent cleanup.
