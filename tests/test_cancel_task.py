@@ -9,7 +9,7 @@ import pytest
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "enhanced_dash_server.py"
 
-# Provide a minimal stub for the optional mcp dependency used by the server
+# Stub minimal MCP modules so server can be imported without dependencies
 stub_mcp = types.ModuleType("mcp")
 stub_server = types.ModuleType("server")
 stub_stdio = types.ModuleType("stdio")
@@ -30,18 +30,17 @@ class TextContent:  # pragma: no cover - stub
 
 stub_types.Tool = Tool  # type: ignore[attr-defined]
 stub_types.TextContent = TextContent  # type: ignore[attr-defined]
-
-
-async def _stdio():  # pragma: no cover - stub
-    return ""
-
-
-stub_stdio.stdio_server = _stdio  # type: ignore[attr-defined]
 stub_bs4.BeautifulSoup = object  # type: ignore[attr-defined]
 stub_fuzzywuzzy.fuzz = types.SimpleNamespace(ratio=lambda *_a, **_k: 0)  # type: ignore[attr-defined]
 stub_fuzzywuzzy.process = types.SimpleNamespace(extract=lambda *_a, **_k: [])  # type: ignore[attr-defined]
 stub_aiofiles.open = lambda *_a, **_k: None  # type: ignore[attr-defined]
 stub_aiohttp.ClientSession = object  # type: ignore[attr-defined]
+
+
+async def _stdio():  # pragma: no cover - stub
+    return ""
+
+stub_stdio.stdio_server = _stdio  # type: ignore[attr-defined]
 
 
 class DummyServer:
@@ -84,37 +83,22 @@ spec = importlib.util.spec_from_file_location("enhanced_dash_server", MODULE_PAT
 assert spec and spec.loader
 server = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(server)
-main = server.main
-
-from contextlib import asynccontextmanager
-
-
-@asynccontextmanager
-async def dummy_stdio_server():
-    """Yield in-memory streams for testing."""
-    class DummyStream:
-        async def send(self, _data: bytes) -> None:  # type: ignore[empty-body]
-            pass
-
-        async def receive(self) -> bytes:
-            await asyncio.sleep(0.1)
-            return b""
-
-    yield DummyStream(), DummyStream()
-
-
-async def dummy_run(self, _r, _w, _o, **_kwargs):
-    while True:
-        await asyncio.sleep(0.1)
+_cancel_task = server._cancel_task
 
 
 @pytest.mark.asyncio
-async def test_main_handles_cancelled(monkeypatch) -> None:
-    """Main should exit cleanly when cancelled."""
-    monkeypatch.setattr(server, "stdio_server", dummy_stdio_server)
-    monkeypatch.setattr(server, "server", type("dummy", (), {"run": dummy_run})())
-    task = asyncio.create_task(main())
+async def test_cancel_task_finishes() -> None:
+    nonlocal_flag = []
+
+    async def forever():
+        try:
+            while True:
+                await asyncio.sleep(0.1)
+        finally:
+            nonlocal_flag.append(True)
+
+    task = asyncio.create_task(forever())
     await asyncio.sleep(0.1)
-    task.cancel()
-    result = await task
-    assert result is None
+    await _cancel_task(task)
+    assert task.done()
+    assert nonlocal_flag

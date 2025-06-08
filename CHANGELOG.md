@@ -1,4 +1,7 @@
 # Changelog
+## [1.1.8](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.1.8) - 2025-06-08
+### Fixed
+- extracted cancellation logic into a helper to avoid duplication
 ## [1.1.7](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.1.7) - 2025-06-08
 ### Fixed
 - re-raise KeyboardInterrupt after cleanup for proper exit status
