@@ -103,8 +103,8 @@ Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
-# Increment version for logging improvements
-__version__ = "1.2.1"  # Project version for SemVer and CHANGELOG automation
+# Increment version for improved error logging
+__version__ = "1.2.2"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
@@ -1289,6 +1289,11 @@ async def main() -> None:
             await server_task
         except (asyncio.CancelledError, KeyboardInterrupt):
             await _cancel_task(server_task)
+        except Exception as exc:  # pragma: no cover - sanity
+            # Log unexpected errors to help diagnose failures
+            logger.exception("Error running server: %s", exc)
+            await _cancel_task(server_task)
+            raise
         finally:
             # Indicate shutdown regardless of cancellation reason
             logger.info("Enhanced Dash MCP server stopped")
