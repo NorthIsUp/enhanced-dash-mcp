@@ -104,7 +104,7 @@ Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
 # Increment version for improved error logging
-__version__ = "1.2.6"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.2.7"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
@@ -353,6 +353,14 @@ class DashMCPServer:
             if env_path
             else Path.home() / "Library/Application Support/Dash/DocSets"
         )
+
+        # Resolve symlinks and handle paths that point to the parent "Dash" directory
+        resolved = self.docsets_path.resolve()
+        if resolved.name != "DocSets" and (resolved / "DocSets").exists():
+            # User supplied Dash root; use its DocSets folder instead
+            resolved = resolved / "DocSets"
+        self.docsets_path = resolved
+
         logger.info("Using docset directory %s", self.docsets_path)
         if not self.docsets_path.exists():
             logger.warning("Docset directory %s does not exist", self.docsets_path)
