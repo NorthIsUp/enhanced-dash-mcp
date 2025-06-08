@@ -18,7 +18,7 @@ def test_stdio_client_used():
 def test_asyncio_run_invocation():
     """Ensure asyncio.run wraps server.run with all required arguments."""
     content = FILE_PATH.read_text()
-    pattern = re.compile(r"asyncio\.run\(server\.run\(.*client\.read_stream.*client\.write_stream.*{}\)\)")
+    pattern = re.compile(r"asyncio\.run\(server\.run\(.*client\.read_stream.*client\.write_stream.*\{\}\)\)")
     assert pattern.search(content), "asyncio.run invocation malformed"
 
 
