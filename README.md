@@ -34,10 +34,40 @@ JavaScript/TypeScript, React, Next.js, Vue.js, Angular, Node.js, Python, Django,
 ## 📋 Prerequisites
 
 - **macOS** with Dash app installed
-- **Python 3.8+**
+- **Python 3.8+** (Python 3.11+ recommended)
 - **Dash docsets** downloaded (JavaScript, Python, React, etc.)
 - **Claude** with MCP support
 - **tmux** (recommended for background execution)
+
+### ⚠️ Important Dependency Requirements
+
+This server requires **Pydantic v2.0+** for MCP compatibility. If you have existing projects with Pydantic v1.x, you may need to:
+
+1. Use a virtual environment (recommended)
+2. Check for compatibility with other tools (like `pieces-os-client`)
+3. Consider using separate Python environments for different projects
+
+```bash
+# Check your current Pydantic version
+pip show pydantic
+
+# If you have v1.x, you'll need to upgrade
+pip install "pydantic>=2.0.0"
+```
+
+### 📦 Dependencies
+
+The setup script automatically installs all required dependencies, including:
+
+- `mcp>=1.9.0` - Model Context Protocol framework
+- `pydantic>=2.0.0` - Data validation (required for MCP compatibility)
+- `beautifulsoup4>=4.12.0` - HTML content extraction
+- `fuzzywuzzy>=0.18.0` - Fuzzy string matching
+- `python-levenshtein>=0.27.0` - Fast string similarity
+- `aiofiles>=24.0.0` - Async file operations
+- `aiohttp>=3.11.0` - Async HTTP client
+- `rapidfuzz>=3.0.0` - Enhanced fuzzy matching
+- `typing-extensions>=4.12.0` - Extended type hints
 
 ## ⚡ Quick Start
 

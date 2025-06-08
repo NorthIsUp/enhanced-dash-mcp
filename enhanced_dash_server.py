@@ -767,24 +767,19 @@ project_server = ProjectAwareDocumentationServer(dash_server)
 
 
 # 1. Add required capabilities declaration
-@server.list_capabilities()
-async def list_capabilities():
+# 1. Add required capabilities declaration
+async def list_capabilities(server):
     """Declare server capabilities per MCP spec"""
-    return {
-        "tools": {"listChanged": True},  # Server will notify when tools change
-        "resources": {},  # Not implemented in this server
-        "prompts": {},  # Not implemented in this server
-    }
+    return server.get_capabilities()
 
 
 # 2. Add initialization handling
-@server.call_method()
-async def handle_initialize(request):
+async def handle_initialize(server, request):
     """Handle initialization handshake"""
     if request.method == "initialize":
         return {
             "protocolVersion": "2025-03-26",
-            "capabilities": await list_capabilities(),
+            "capabilities": await list_capabilities(server),
             "serverInfo": {
                 "name": "Enhanced Dash Documentation Server",
                 "version": "1.0.0",

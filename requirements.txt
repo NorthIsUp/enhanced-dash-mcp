@@ -1,6 +1,13 @@
-mcp
-beautifulsoup4
-fuzzywuzzy
-python-levenshtein
-aiofiles
-aiohttp
+# MCP Server for Enhanced Dash Documentation
+# Core dependencies
+mcp>=1.9.0
+pydantic>=2.0.0
+beautifulsoup4>=4.12.0
+fuzzywuzzy>=0.18.0
+python-levenshtein>=0.27.0
+aiofiles>=24.0.0
+aiohttp>=3.11.0
+
+# Optional dependencies for enhanced functionality
+rapidfuzz>=3.0.0
+typing-extensions>=4.12.0
