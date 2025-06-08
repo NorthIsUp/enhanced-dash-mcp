@@ -1,5 +1,6 @@
 import sys
 import types
+from typing import Any
 
 import pytest
 
@@ -9,6 +10,23 @@ def stub_modules(monkeypatch):
     """Provide minimal MCP and third-party stubs for tests."""
     stub_mcp = types.ModuleType("mcp")
     stub_server = types.ModuleType("server")
+    # Provide decorators expected by enhanced_dash_server
+
+    def list_tools() -> Any:
+        def decorator(func: Any) -> Any:
+            return func
+        return decorator
+
+    def call_tool() -> Any:
+        def decorator(func: Any) -> Any:
+            async def wrapper(*args: Any, **kwargs: Any) -> Any:
+                return await func(*args, **kwargs)
+
+            return wrapper
+        return decorator
+
+    stub_server.list_tools = list_tools  # type: ignore[attr-defined]
+    stub_server.call_tool = call_tool  # type: ignore[attr-defined]
     stub_stdio = types.ModuleType("stdio")
     stub_types = types.ModuleType("types")
     stub_bs4 = types.ModuleType("bs4")

@@ -1,4 +1,7 @@
 # Changelog
+## [1.1.11](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.1.11) - 2025-06-08
+### Fixed
+- cancel helper suppresses `KeyboardInterrupt` so shutdown completes cleanly
 ## [1.1.10](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.1.10) - 2025-06-08
 ### Fixed
 - ensure `main` returns after task cancellation so startup never hangs

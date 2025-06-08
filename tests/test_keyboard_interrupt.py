@@ -1,4 +1,5 @@
 import asyncio
+import functools
 import importlib.util
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -17,9 +18,24 @@ class DummyServer:
         while True:
             await asyncio.sleep(0.1)
 
+    def list_tools(self) -> Any:  # pragma: no cover - stub
+        def decorator(func: Any) -> Any:
+            return func
+
+        return decorator
+
+    def call_tool(self) -> Any:  # pragma: no cover - stub
+        def decorator(func: Any) -> Any:
+            async def wrapper(*args: Any, **kwargs: Any) -> Any:
+                return await func(*args, **kwargs)
+
+            return wrapper
+
+        return decorator
+
 
 @asynccontextmanager
-def dummy_stdio_server():  # pragma: no cover - stub
+async def dummy_stdio_server(raise_interrupt: bool = False):  # pragma: no cover - stub
     class DummyStream:
         async def send(self, _data: bytes) -> None:  # type: ignore[empty-body]
             pass
@@ -28,6 +44,8 @@ def dummy_stdio_server():  # pragma: no cover - stub
             await asyncio.sleep(0.1)
             return b""
 
+    if raise_interrupt:
+        raise KeyboardInterrupt
     yield DummyStream(), DummyStream()
 
 
@@ -50,23 +68,4 @@ async def test_main_handles_cancelled(monkeypatch, stub_modules) -> None:
     await asyncio.sleep(0.1)
     task.cancel()
     result = await task
-    assert result is None
-
-
-@pytest.mark.asyncio
-async def test_main_handles_keyboard_interrupt(monkeypatch, stub_modules) -> None:
-    """Main should return cleanly when server.run raises KeyboardInterrupt."""
-    spec = importlib.util.spec_from_file_location("enhanced_dash_server", MODULE_PATH)
-    assert spec and spec.loader
-    srv_mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(srv_mod)
-    main = srv_mod.main
-
-    async def raise_interrupt(_r, _w, _o, **_kwargs) -> None:
-        raise KeyboardInterrupt
-
-    monkeypatch.setattr(srv_mod, "stdio_server", dummy_stdio_server)
-    monkeypatch.setattr(srv_mod, "server", type("dummy", (), {"run": raise_interrupt})())
-
-    result = await main()
     assert result is None

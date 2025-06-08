@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import importlib.util
 from pathlib import Path
 from typing import Any
@@ -57,3 +58,20 @@ async def test_cancel_task_finishes(stub_modules) -> None:
     await _cancel_task(task)
     assert task.done()
     assert nonlocal_flag
+
+
+@pytest.mark.asyncio
+async def test_cancel_task_handles_keyboard_interrupt(stub_modules) -> None:
+    """_cancel_task should swallow KeyboardInterrupt from a finished task."""
+    stub_server = stub_modules["mcp.server"]
+    stub_server.Server = DummyServer  # type: ignore[attr-defined]
+
+    spec = importlib.util.spec_from_file_location("enhanced_dash_server", MODULE_PATH)
+    assert spec and spec.loader
+    server_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(server_mod)
+    _cancel_task = server_mod._cancel_task
+
+    task: asyncio.Future[Any] = asyncio.Future()
+    task.set_exception(KeyboardInterrupt())
+    await _cancel_task(task)
