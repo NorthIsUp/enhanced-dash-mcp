@@ -5,11 +5,11 @@ FILE_PATH = Path(__file__).resolve().parents[1] / "enhanced_dash_server.py"
 
 
 def test_stdio_server_used():
-    """Ensure the main section wires the server with stdio_server."""
-    lines = FILE_PATH.read_text().splitlines()
-    snippet = "\n".join(lines[-6:])
-    assert "stdio_server" in snippet, "stdio_server not used"
-    assert "server.run" in snippet, "server.run call missing"
+    """Ensure the main coroutine wires the server with stdio_server."""
+    content = FILE_PATH.read_text()
+    assert "stdio_server" in content, "stdio_server not referenced"
+    pattern = re.compile(r"server\.run\(read_stream,\s*write_stream,\s*\{\}\)")
+    assert pattern.search(content), "server.run call with streams missing"
 
 
 def test_asyncio_run_invocation():
