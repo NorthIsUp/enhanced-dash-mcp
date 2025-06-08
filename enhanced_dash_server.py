@@ -102,9 +102,9 @@ Author: Josh (Fort Collins, CO)
 Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
-# Bump version after updating docs and tests to clarify stdio_server usage
-# Increment version for improved error logging
-__version__ = "1.2.8"  # Project version for SemVer and CHANGELOG automation
+# Bump version after fixing Dash directory structure and database schema handling
+# Fix docset discovery and add support for both Core Data and searchIndex schemas
+__version__ = "1.2.9"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
@@ -385,40 +385,46 @@ class DashMCPServer:
             return cached
 
         docsets = []
-        for docset_dir in self.docsets_path.glob("*.docset"):
-            db_path = docset_dir / "Contents/Resources/docSet.dsidx"
-            docs_path = docset_dir / "Contents/Resources/Documents"
+        # Handle Dash directory structure: DocSets/Name/Name.docset/
+        if self.docsets_path.exists():
+            for item in self.docsets_path.iterdir():
+                if item.is_dir() and not item.name.startswith('.'):
+                    # Look for docset inside the subdirectory
+                    docset_dir = item / f"{item.name}.docset"
+                    if docset_dir.exists():
+                        db_path = docset_dir / "Contents/Resources/docSet.dsidx"
+                        docs_path = docset_dir / "Contents/Resources/Documents"
 
-            if db_path.exists():
-                # Get docset info
-                info_plist = docset_dir / "Contents/Info.plist"
-                docset_info = {
-                    "name": docset_dir.stem,
-                    "db_path": str(db_path),
-                    "docs_path": str(docs_path),
-                    "has_content": docs_path.exists(),
-                }
+                        if db_path.exists():
+                            # Get docset info
+                            info_plist = docset_dir / "Contents/Info.plist"
+                            docset_info = {
+                                "name": item.name,  # Use the parent directory name
+                                "db_path": str(db_path),
+                                "docs_path": str(docs_path),
+                                "has_content": docs_path.exists(),
+                            }
 
-                # Try to get display name from plist
-                if info_plist.exists():
-                    try:
-                        # Basic plist parsing (you might want to use plistlib)
-                        with open(info_plist, "r") as f:
-                            content = f.read()
-                            if "CFBundleName" in content:
-                                # Simple extraction
-                                import re
+                            # Try to get display name from plist
+                            if info_plist.exists():
+                                try:
+                                    # Basic plist parsing (you might want to use plistlib)
+                                    with open(info_plist, "r") as f:
+                                        content = f.read()
+                                        if "CFBundleName" in content:
+                                            # Simple extraction
+                                            import re
 
-                                match = re.search(
-                                    r"<key>CFBundleName</key>\s*<string>([^<]+)</string>",
-                                    content,
-                                )
-                                if match:
-                                    docset_info["display_name"] = match.group(1)
-                    except Exception:
-                        pass
+                                            match = re.search(
+                                                r"<key>CFBundleName</key>\s*<string>([^<]+)</string>",
+                                                content,
+                                            )
+                                            if match:
+                                                docset_info["display_name"] = match.group(1)
+                                except Exception:
+                                    pass
 
-                docsets.append(docset_info)
+                            docsets.append(docset_info)
 
         await self.cache.set(cache_key, docsets)
         return docsets
@@ -459,6 +465,7 @@ class DashMCPServer:
                     tables = [row[0] for row in cursor.fetchall()]
 
                     if "searchIndex" in tables:
+                        # Traditional searchIndex schema
                         cursor.execute("PRAGMA table_info(searchIndex)")
                         columns = [row[1] for row in cursor.fetchall()]
 
@@ -481,6 +488,49 @@ class DashMCPServer:
                                 anchor=row[3] if len(row) > 3 else None,
                             )
                             all_entries.append(entry)
+                    
+                    elif "ZTOKEN" in tables and "ZTOKENTYPE" in tables:
+                        # Core Data schema (newer Dash versions)
+                        try:
+                            # Query the Core Data schema
+                            sql = """
+                            SELECT t.ZTOKENNAME as name, tt.ZTYPENAME as type, t.ZPATH as path
+                            FROM ZTOKEN t
+                            LEFT JOIN ZTOKENTYPE tt ON t.ZTOKENTYPE = tt.Z_PK
+                            WHERE t.ZTOKENNAME LIKE ? 
+                            LIMIT ?
+                            """
+                            
+                            cursor.execute(sql, (f"%{query}%", limit * 2))
+                            
+                            for row in cursor.fetchall():
+                                if row[0]:  # Ensure name is not None
+                                    entry = DocEntry(
+                                        name=row[0],
+                                        type=row[1] or "Unknown",
+                                        path=row[2] or "",
+                                        docset=docset["name"],
+                                    )
+                                    all_entries.append(entry)
+                        except sqlite3.Error as e:
+                            logger.warning("Core Data query failed for %s: %s", docset["name"], e)
+                            # Fallback to simpler query
+                            try:
+                                cursor.execute("SELECT ZTOKENNAME, ZPATH FROM ZTOKEN WHERE ZTOKENNAME LIKE ? LIMIT ?", (f"%{query}%", limit))
+                                for row in cursor.fetchall():
+                                    if row[0]:
+                                        entry = DocEntry(
+                                            name=row[0],
+                                            type="Unknown",
+                                            path=row[1] or "",
+                                            docset=docset["name"],
+                                        )
+                                        all_entries.append(entry)
+                            except sqlite3.Error:
+                                logger.warning("Fallback query also failed for %s", docset["name"])
+                    
+                    else:
+                        logger.warning("Unknown database schema for docset %s. Tables: %s", docset["name"], tables)
 
                 except sqlite3.Error as e:
                     logger.error("Database error in %s: %s", docset['name'], e)
