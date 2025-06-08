@@ -11,3 +11,8 @@ def test_help_mentions_stdio_server():
 def test_help_mentions_initialization_options():
     content = HELP_DOC.read_text()
     assert "create_initialization_options" in content
+
+
+def test_help_mentions_limit_validation():
+    content = HELP_DOC.read_text()
+    assert "integer `limit`" in content
