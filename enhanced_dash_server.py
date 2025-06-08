@@ -103,7 +103,7 @@ Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
-__version__ = "1.1.3"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.1.4"  # Project version for SemVer and CHANGELOG automation
 
 import sqlite3
 import os
@@ -112,7 +112,7 @@ import json
 import time
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from urllib.parse import urlparse
 import hashlib
@@ -145,18 +145,18 @@ class ProjectContext:
 
     language: Optional[str] = None
     framework: Optional[str] = None
-    dependencies: List[str] = None
+    dependencies: Optional[List[str]] = None
     project_type: Optional[str] = None
-    current_files: List[str] = None
+    current_files: Optional[List[str]] = None
 
 
 class CacheManager:
     """Handles caching of documentation content and search results"""
 
-    def __init__(self, cache_dir: Path = None):
+    def __init__(self, cache_dir: Optional[Path] = None) -> None:
         self.cache_dir = cache_dir or Path.home() / ".cache" / "dash-mcp"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self.memory_cache = {}
+        self.memory_cache: Dict[str, Tuple[Any, float]] = {}
         self.cache_ttl = 3600  # 1 hour
 
     def _get_cache_key(self, data: str) -> str:
