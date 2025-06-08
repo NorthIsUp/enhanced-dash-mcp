@@ -1,6 +1,6 @@
 # Enhanced Dash MCP Server
 
-![Version](https://img.shields.io/badge/version-1.2.6-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.8-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
@@ -301,6 +301,11 @@ ls ~/Library/Application\ Support/Dash/DocSets/
 # Should show *.docset directories
 # Optionally set DASH_DOCSETS_PATH if your docsets live elsewhere
 # (symlinks to the default location are supported)
+# When creating a symlink, point it at `~/Library/Application Support/Dash`.
+# A symlink directly to the `DocSets` folder will produce a search path
+# ending in `DocSets/DocSets` and no docsets will be discovered.
+# The server now resolves such symlinks automatically and also corrects
+# `DASH_DOCSETS_PATH` values that point at the parent `Dash` directory.
 ```
 
 **❌ "Permission errors"**

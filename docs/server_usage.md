@@ -23,7 +23,7 @@ TypeError: Server.run() missing 3 required positional arguments
 
 Just run the script directly and the server will wire itself to STDIO.
 Press `Ctrl+C` to stop the server gracefully; the program handles
-`KeyboardInterrupt` without printing a stack trace. Version 1.2.6 adds startup
+`KeyboardInterrupt` without printing a stack trace. Version 1.2.8 adds startup
 and shutdown log messages and fixes
 an issue where the server could hang during startup when interrupted.
 Both `KeyboardInterrupt` and internal cancellations use the same
@@ -37,5 +37,7 @@ Set `DASH_MCP_LOG_LEVEL` to control verbosity or `DASH_MCP_LOG_FILE`
 to change the path.
 Set `DASH_DOCSETS_PATH` only if your Dash documentation lives outside the default path.
 Symlinks under `~/Library/Application Support/Dash` are followed automatically.
+If the variable points at the `Dash` directory rather than `DocSets`, the server
+will automatically correct the search path.
 The log will record startup, shutdown, and unexpected error messages so you can
 confirm the server launched correctly and diagnose failures.

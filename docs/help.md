@@ -5,7 +5,7 @@ This project provides an MCP server that interacts with Dash docsets.
 - Run the server with `python3 enhanced_dash_server.py`. The script uses
   `stdio_server` internally to expose STDIO streams. Press `Ctrl+C` to
   stop the server gracefully without seeing a stack trace. Since version
-   1.2.6 the server logs startup, shutdown, and unexpected error events, and cancels its tasks properly so startup no longer hangs
+   1.2.8 the server logs startup, shutdown, and unexpected error events, and cancels its tasks properly so startup no longer hangs
   when interrupted. Cancellation for `Ctrl+C` and task timeouts now
   share a single code path via `_cancel_task`.
 - Initialization options are now generated with
@@ -26,6 +26,11 @@ This project provides an MCP server that interacts with Dash docsets.
 - Set `DASH_DOCSETS_PATH` only if your Dash docsets aren't under
   `~/Library/Application Support/Dash/DocSets/`.
 - Symlinks to that directory are resolved automatically.
+- When creating a symlink, target the parent `Dash` directory rather than the
+  `DocSets` folder itself. Linking directly to `DocSets` results in a search
+  path like `.../DocSets/DocSets` and the server won't find your docsets.
+- The server now adjusts automatically if `DASH_DOCSETS_PATH` points to the
+  `Dash` directory instead of `DocSets`.
 - The log file now includes startup and shutdown messages and records any unexpected errors.
 
 - Review [CHANGELOG.md](../CHANGELOG.md) for a summary of recent releases.
