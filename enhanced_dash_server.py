@@ -1241,6 +1241,7 @@ async def rate_limited_call_tool(name, arguments):
 
 
 if __name__ == "__main__":
-    # Run the server using STDIO streams so MCP clients can communicate
+    # Create a StdioClient so Server.run receives the required streams.
+    # This avoids `TypeError` about missing read/write stream arguments.
     client = StdioClient()
     asyncio.run(server.run(client.read_stream, client.write_stream, {}))
