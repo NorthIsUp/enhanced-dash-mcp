@@ -8,6 +8,10 @@ This project provides an MCP server that interacts with Dash docsets.
    1.2.2 the server logs startup, shutdown, and unexpected error events, and cancels its tasks properly so startup no longer hangs
   when interrupted. Cancellation for `Ctrl+C` and task timeouts now
   share a single code path via `_cancel_task`.
+- Initialization options are now generated with
+  `server.create_initialization_options()` before running the server to avoid
+  `AttributeError: 'dict' object has no attribute 'capabilities'` in certain MCP
+  clients.
 - If you encounter `ModuleNotFoundError: No module named 'mcp.streams'`,
   update to version 1.1.4 or later which replaces `StdioClient` with
   `stdio_server`.

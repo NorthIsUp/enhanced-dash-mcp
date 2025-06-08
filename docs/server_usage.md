@@ -27,7 +27,10 @@ Press `Ctrl+C` to stop the server gracefully; the program handles
 and shutdown log messages and fixes
 an issue where the server could hang during startup when interrupted.
 Both `KeyboardInterrupt` and internal cancellations use the same
-`_cancel_task` helper to ensure consistent cleanup.
+`_cancel_task` helper to ensure consistent cleanup. The server now calls
+`server.create_initialization_options()` before invoking `server.run()` to
+avoid AttributeError warnings from MCP clients expecting structured
+initialization data.
 
 Logs are stored in `~/.cache/dash-mcp/server.log` with rotation.
 Set `DASH_MCP_LOG_LEVEL` to control verbosity or `DASH_MCP_LOG_FILE`
