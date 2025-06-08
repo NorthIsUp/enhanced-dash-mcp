@@ -35,5 +35,7 @@ initialization data.
 Logs are stored in `~/.cache/dash-mcp/server.log` with rotation.
 Set `DASH_MCP_LOG_LEVEL` to control verbosity or `DASH_MCP_LOG_FILE`
 to change the path.
+Set `DASH_DOCSETS_PATH` only if your Dash documentation lives outside the default path.
+Symlinks under `~/Library/Application Support/Dash` are followed automatically.
 The log will record startup, shutdown, and unexpected error messages so you can
 confirm the server launched correctly and diagnose failures.

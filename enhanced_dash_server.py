@@ -104,7 +104,7 @@ Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
 # Increment version for improved error logging
-__version__ = "1.2.4"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.2.6"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
@@ -347,7 +347,15 @@ class DashMCPServer:
     """Enhanced Dash MCP Server with caching, content extraction, and fuzzy search"""
 
     def __init__(self):
-        self.docsets_path = Path.home() / "Library/Application Support/Dash/DocSets"
+        env_path = os.getenv("DASH_DOCSETS_PATH")
+        self.docsets_path = (
+            Path(env_path)
+            if env_path
+            else Path.home() / "Library/Application Support/Dash/DocSets"
+        )
+        logger.info("Using docset directory %s", self.docsets_path)
+        if not self.docsets_path.exists():
+            logger.warning("Docset directory %s does not exist", self.docsets_path)
         self.server = Server("dash-docs-enhanced")
         self.cache = CacheManager()
         self.extractor = ContentExtractor()

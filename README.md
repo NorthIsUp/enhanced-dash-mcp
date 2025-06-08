@@ -299,6 +299,8 @@ Add MCP server status to your prompt:
 # Ensure Dash is installed with docsets
 ls ~/Library/Application\ Support/Dash/DocSets/
 # Should show *.docset directories
+# Optionally set DASH_DOCSETS_PATH if your docsets live elsewhere
+# (symlinks to the default location are supported)
 ```
 
 **❌ "Permission errors"**

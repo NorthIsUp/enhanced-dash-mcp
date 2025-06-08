@@ -23,6 +23,9 @@ This project provides an MCP server that interacts with Dash docsets.
 - Logs are written to `~/.cache/dash-mcp/server.log` by default. Adjust
   `DASH_MCP_LOG_LEVEL` and `DASH_MCP_LOG_FILE` environment variables to
   control logging.
+- Set `DASH_DOCSETS_PATH` only if your Dash docsets aren't under
+  `~/Library/Application Support/Dash/DocSets/`.
+- Symlinks to that directory are resolved automatically.
 - The log file now includes startup and shutdown messages and records any unexpected errors.
 
 For more detailed usage, see [server_usage.md](server_usage.md).
