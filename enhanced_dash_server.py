@@ -7,8 +7,8 @@ A Model Context Protocol (MCP) server that provides Claude with intelligent acce
 
 Overview
 --------
-This server bridges the gap between Claude and your locally stored Dash docsets, enabling seamless documentation 
-lookup during development workflows. It transforms static documentation into an interactive, searchable resource 
+This server bridges the gap between Claude and your locally stored Dash docsets, enabling seamless documentation
+lookup during development workflows. It transforms static documentation into an interactive, searchable resource
 that integrates directly with Claude's capabilities.
 
 Key Features
@@ -102,6 +102,7 @@ Author: Josh (Fort Collins, CO)
 Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
+__version__ = "1.1.0"  # Project version for SemVer and CHANGELOG automation
 
 import sqlite3
 import os
