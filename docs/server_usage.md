@@ -23,7 +23,7 @@ TypeError: Server.run() missing 3 required positional arguments
 
 Just run the script directly and the server will wire itself to STDIO.
 Press `Ctrl+C` to stop the server gracefully; the program handles
-`KeyboardInterrupt` without printing a stack trace. Version 1.2.2 adds startup
+`KeyboardInterrupt` without printing a stack trace. Version 1.2.6 adds startup
 and shutdown log messages and fixes
 an issue where the server could hang during startup when interrupted.
 Both `KeyboardInterrupt` and internal cancellations use the same
