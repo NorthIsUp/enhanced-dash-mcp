@@ -72,6 +72,8 @@ The setup script automatically installs all required dependencies, including:
 
 ## ⚡ Quick Start
 
+See [docs/help.md](docs/help.md) for a brief overview of how to run the server.
+
 ### 1. **Clone & Setup**
 
 ```bash

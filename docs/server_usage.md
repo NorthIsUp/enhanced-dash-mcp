@@ -2,9 +2,8 @@
 
 The server communicates over standard input and output. It uses the
 `stdio_server` context manager from the MCP library to expose its streams
-for MCP clients. An asynchronous `main` coroutine wires these streams to
-`server.run`.
-correctly.
+for MCP clients. An asynchronous `main` coroutine obtains these streams and
+wires them to `server.run` using `asyncio.run`.
 
 Example:
 

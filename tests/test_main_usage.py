@@ -4,12 +4,14 @@ from pathlib import Path
 FILE_PATH = Path(__file__).resolve().parents[1] / "enhanced_dash_server.py"
 
 
-def test_stdio_server_used():
-    """Ensure the main coroutine wires the server with stdio_server."""
+def test_async_stdio_server_used():
+    """Ensure the async main coroutine wires `server.run` with stdio_server."""
     content = FILE_PATH.read_text()
     assert "stdio_server" in content, "stdio_server not referenced"
-    pattern = re.compile(r"server\.run\(read_stream,\s*write_stream,\s*\{\}\)")
-    assert pattern.search(content), "server.run call with streams missing"
+    pattern = re.compile(
+        r"server\.run\(\s*read_stream\s*,\s*write_stream\s*,\s*(\{\}|dict\(\))\s*\)"
+    )
+    assert pattern.search(content), "server.run call with streams missing or incorrectly formatted"
 
 
 def test_asyncio_run_invocation():
