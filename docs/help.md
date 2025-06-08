@@ -19,7 +19,7 @@ This project provides an MCP server that interacts with Dash docsets.
 - Lint and type-check using `flake8 .` and `mypy .`; configuration files are
   provided in `.flake8` and `mypy.ini`.
 - When calling `search_dash_docs`, pass an integer `limit` between 1 and 100.
-  Values that are not integers will be cast to an integer automatically.
+  Float values are cast to an integer automatically. Non-numeric values raise `ValueError`. Negative numbers are clamped to `1`.
 - Logs are written to `~/.cache/dash-mcp/server.log` by default. Adjust
   `DASH_MCP_LOG_LEVEL` and `DASH_MCP_LOG_FILE` environment variables to
   control logging.
