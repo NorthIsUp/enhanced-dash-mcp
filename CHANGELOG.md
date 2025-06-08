@@ -1,4 +1,8 @@
 # Changelog
+## [1.1.7](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.1.7) - 2025-06-08
+### Fixed
+- re-raise KeyboardInterrupt after cleanup for proper exit status
+
 ## [1.1.6](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.1.6) - 2025-06-08
 ### Fixed
 - cancel server task on Ctrl+C so startup no longer hangs

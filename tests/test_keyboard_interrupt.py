@@ -62,10 +62,10 @@ stub_server.Server = DummyServer  # type: ignore[attr-defined]
 stub_mcp.server = stub_server  # type: ignore[attr-defined]
 stub_mcp.server.stdio = stub_stdio  # type: ignore[attr-defined]
 stub_mcp.types = stub_types  # type: ignore[attr-defined]
-sys.modules.setdefault("mcp", stub_mcp)
-sys.modules.setdefault("mcp.server", stub_server)
-sys.modules.setdefault("mcp.server.stdio", stub_stdio)
-sys.modules.setdefault("mcp.types", stub_types)
+sys.modules["mcp"] = stub_mcp
+sys.modules["mcp.server"] = stub_server
+sys.modules["mcp.server.stdio"] = stub_stdio
+sys.modules["mcp.types"] = stub_types
 
 spec = importlib.util.spec_from_file_location("enhanced_dash_server", MODULE_PATH)
 assert spec and spec.loader

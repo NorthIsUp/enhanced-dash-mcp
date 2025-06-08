@@ -103,7 +103,7 @@ Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
-__version__ = "1.1.6"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.1.7"  # Project version for SemVer and CHANGELOG automation
 
 import sqlite3
 import os
@@ -1245,13 +1245,18 @@ async def rate_limited_call_tool(name, arguments):
 async def main() -> None:
     """Run the server with STDIO streams and handle cancellation."""
     async with stdio_server() as (read_stream, write_stream):
-        task = asyncio.create_task(server.run(read_stream, write_stream, {}))
+        server_task = asyncio.create_task(server.run(read_stream, write_stream, {}))
         try:
-            await task
-        except (asyncio.CancelledError, KeyboardInterrupt):
-            task.cancel()
+            await server_task
+        except asyncio.CancelledError:
+            server_task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
-                await task
+                await server_task
+        except KeyboardInterrupt:
+            server_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await server_task
+            raise
 
 
 if __name__ == "__main__":
