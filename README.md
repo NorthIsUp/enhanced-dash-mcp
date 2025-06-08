@@ -1,6 +1,6 @@
 # Enhanced Dash MCP Server
 
-![Version](https://img.shields.io/badge/version-1.1.2-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.4-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
@@ -368,10 +368,10 @@ pip install pytest black flake8 mypy
 # Unit tests
 pytest tests/
 
-# Linting
+# Linting and type checks
 black .
-flake8 .
-mypy .
+flake8 .  # uses settings from .flake8
+mypy .    # uses settings from mypy.ini
 ```
 
 ### **Adding New Features**

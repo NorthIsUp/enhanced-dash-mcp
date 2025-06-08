@@ -14,7 +14,7 @@ python3 enhanced_dash_server.py
 This invocation wires the server to STDIO internally and requires no
 additional parameters.
 
-Since version 1.1.2 the main script uses `stdio_server` to obtain read and
+Since version 1.1.4 the main script uses `stdio_server` to obtain read and
 write streams for `server.run()`. This prevents errors like:
 
 ```
