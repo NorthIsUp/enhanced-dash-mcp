@@ -103,27 +103,28 @@ Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
-__version__ = "1.1.4"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.1.11"  # Project version for SemVer and CHANGELOG automation
 
-import sqlite3
-import os
 import asyncio
-import json
-import time
-import re
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass
-from urllib.parse import urlparse
+import contextlib
 import hashlib
+import json
+import os
+import re
+import sqlite3
+import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
-from mcp.server import Server
-from mcp.types import Tool, TextContent
-from mcp.server.stdio import stdio_server  # Provides STDIO streams for Server.run
-from bs4 import BeautifulSoup
-from fuzzywuzzy import fuzz, process
 import aiofiles
 import aiohttp
+from bs4 import BeautifulSoup
+from fuzzywuzzy import fuzz, process
+from mcp.server import Server
+from mcp.server.stdio import stdio_server  # Provides STDIO streams for Server.run
+from mcp.types import Tool, TextContent
 
 
 @dataclass
@@ -764,7 +765,7 @@ class ProjectAwareDocumentationServer:
 
 
 # Initialize servers
-server = Server("dash-docs-enhanced")
+server: Server = Server("dash-docs-enhanced")
 dash_server = DashMCPServer()
 project_server = ProjectAwareDocumentationServer(dash_server)
 
@@ -1241,10 +1242,29 @@ async def rate_limited_call_tool(name, arguments):
     return await call_tool(name, arguments)
 
 
+async def _cancel_task(task: asyncio.Task) -> None:
+    """Cancel a task and wait for it to finish."""
+    # Centralizes task cancellation to prevent duplicate cleanup logic.
+    task.cancel()
+    # The server task may have already raised KeyboardInterrupt which should
+    # not propagate further during cleanup.
+    with contextlib.suppress(asyncio.CancelledError, KeyboardInterrupt):
+        await task
+
+
 async def main() -> None:
-    """Run the server with STDIO streams."""
+    """Run the server with STDIO streams and handle cancellation."""
     async with stdio_server() as (read_stream, write_stream):
-        await server.run(read_stream, write_stream, {})
+        server_task = asyncio.create_task(
+            # stdio_server provides untyped streams that satisfy the expected
+            # asyncio.StreamReader/StreamWriter interface
+            server.run(read_stream, write_stream, {})  # type: ignore[arg-type]
+        )
+        try:
+            await server_task
+        except (asyncio.CancelledError, KeyboardInterrupt):
+            await _cancel_task(server_task)
+            return
 
 
 if __name__ == "__main__":
