@@ -9,3 +9,10 @@ This project uses an automated workflow to keep the `CHANGELOG.md` up to date. A
 3. If the changelog is updated, the workflow commits the new file back to the repository.
 
 Developers should not manually edit `CHANGELOG.md`; instead, write Conventional Commit messages so the generator can produce clear release notes.
+
+## Release Workflow
+
+When a new Git tag matching `v*.*.*` is pushed to `main`, a separate workflow
+creates a GitHub release with notes derived from the changelog. This keeps
+published versions in sync with the changelog and provides a convenient
+download link for each release.
