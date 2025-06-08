@@ -10,6 +10,16 @@ This project uses an automated workflow to keep the `CHANGELOG.md` up to date. A
 
 Developers should not manually edit `CHANGELOG.md`; instead, write Conventional Commit messages so the generator can produce clear release notes.
 
+## Changelog Format
+
+Each version header should follow this pattern so automated tests can verify links:
+
+```
+## [1.2.3](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.3) - YYYY-MM-DD
+```
+
+The `tests/test_changelog_links.py` file checks that every entry in `CHANGELOG.md` conforms to this format.
+
 ## Release Workflow
 
 When a new Git tag matching `v[0-9]+\.[0-9]+\.[0-9]+` is pushed to `main`, a separate workflow
