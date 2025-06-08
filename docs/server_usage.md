@@ -23,7 +23,11 @@ TypeError: Server.run() missing 3 required positional arguments
 
 Just run the script directly and the server will wire itself to STDIO.
 Press `Ctrl+C` to stop the server gracefully; the program handles
-`KeyboardInterrupt` without printing a stack trace. Version 1.1.11 fixes
+`KeyboardInterrupt` without printing a stack trace. Version 1.2.0 fixes
 an issue where the server could hang during startup when interrupted.
 Both `KeyboardInterrupt` and internal cancellations use the same
 `_cancel_task` helper to ensure consistent cleanup.
+
+Logs are stored in `~/.cache/dash-mcp/server.log` with rotation.
+Set `DASH_MCP_LOG_LEVEL` to control verbosity or `DASH_MCP_LOG_FILE`
+to change the path.

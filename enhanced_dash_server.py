@@ -103,10 +103,12 @@ Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
-__version__ = "1.1.11"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.2.0"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
+import logging
+from logging.handlers import RotatingFileHandler
 import hashlib
 import json
 import os
@@ -125,6 +127,26 @@ from fuzzywuzzy import fuzz, process
 from mcp.server import Server
 from mcp.server.stdio import stdio_server  # Provides STDIO streams for Server.run
 from mcp.types import Tool, TextContent
+
+
+def configure_logging(log_level: int = logging.INFO, log_file: Optional[str] = None) -> None:
+    """Configure console and optional file logging."""
+    log_format = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+    handlers: List[logging.Handler] = [logging.StreamHandler()]
+    if log_file:
+        Path(log_file).parent.mkdir(parents=True, exist_ok=True)
+        handlers.append(RotatingFileHandler(log_file, maxBytes=1_000_000, backupCount=3))
+    logging.basicConfig(level=log_level, format=log_format, handlers=handlers, force=True)
+
+
+# Environment-controlled logging configuration
+LOG_LEVEL = os.getenv("DASH_MCP_LOG_LEVEL", "INFO").upper()
+LOG_FILE = os.getenv(
+    "DASH_MCP_LOG_FILE",
+    str(Path.home() / ".cache" / "dash-mcp" / "server.log"),
+)
+configure_logging(getattr(logging, LOG_LEVEL, logging.INFO), LOG_FILE)
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -205,7 +227,7 @@ class CacheManager:
             async with aiofiles.open(cache_file, "w") as f:
                 await f.write(json.dumps({"data": data, "timestamp": timestamp}))
         except Exception as e:
-            print(f"Cache write error: {e}")
+            logger.error("Cache write error: %s", e)
 
 
 class ContentExtractor:
@@ -244,7 +266,7 @@ class ContentExtractor:
             return text[:5000]  # Limit content length
 
         except Exception as e:
-            print(f"Error extracting content from {file_path}: {e}")
+            logger.error("Error extracting content from %s: %s", file_path, e)
             return ""
 
     @staticmethod
@@ -444,12 +466,12 @@ class DashMCPServer:
                             all_entries.append(entry)
 
                 except sqlite3.Error as e:
-                    print(f"Database error in {docset['name']}: {e}")
+                    logger.error("Database error in %s: %s", docset['name'], e)
 
                 conn.close()
 
             except Exception as e:
-                print(f"Error searching {docset['name']}: {e}")
+                logger.error("Error searching %s: %s", docset['name'], e)
 
         # Apply fuzzy search if enabled
         if use_fuzzy and all_entries:
@@ -513,7 +535,7 @@ class DashMCPServer:
                         content = await self.supported_formats[file_ext](file_path)
                         entry.content = content
                     except Exception as e:
-                        print(f"Error extracting content from {file_path}: {e}")
+                        logger.error("Error extracting content from %s: %s", file_path, e)
 
 
 class ProjectAwareDocumentationServer:
@@ -552,7 +574,7 @@ class ProjectAwareDocumentationServer:
                         context.framework = "express"
 
             except Exception as e:
-                print(f"Error analyzing package.json: {e}")
+                logger.error("Error analyzing package.json: %s", e)
 
         elif (project_dir / "requirements.txt").exists() or (
             project_dir / "pyproject.toml"
@@ -676,7 +698,7 @@ class ProjectAwareDocumentationServer:
                         )  # Boost project-relevant results
                     all_results.extend(results)
                 except Exception as e:
-                    print(f"Error searching {docset}: {e}")
+                    logger.error("Error searching %s: %s", docset, e)
 
         # If no project-specific results, fall back to general search
         if not all_results:
@@ -1151,7 +1173,7 @@ async def call_tool(name, arguments):
         return [TextContent(type="text", text=f"Error: {str(e)}", isError=True)]
     except Exception as e:
         # Log unexpected errors and return safe message
-        print(f"Unexpected error in tool {name}: {e}")
+        logger.error("Unexpected error in tool %s: %s", name, e)
         return [
             TextContent(
                 type="text",
