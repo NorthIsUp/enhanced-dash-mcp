@@ -1,11 +1,16 @@
+#  (2025-06-10)
+
 # Changelog
+
 ## [1.2.11](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.11) - 2025-06-10
 - feat: recursively search for `.docset` directories to support nested docsets
 
 ## [1.2.10](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.10) - 2025-06-10
 - docs: clarify symlink placement instructions in README
+
 ## [1.2.9](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.9) - 2025-06-08
 - fix: preserve full history when generating changelog via GitHub Actions
+
 ## [1.2.8](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.8) - 2025-06-08
 - fix: handle symlinked DocSets paths more robustly
 - test: add coverage for symlinked DocSets environment variable
