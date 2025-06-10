@@ -104,7 +104,7 @@ Optimized for Python/JavaScript/React development workflows
 """
 # Bump version after updating docs and tests to clarify stdio_server usage
 # Increment version for improved error logging
-__version__ = "1.2.8"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.2.11"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
@@ -385,6 +385,7 @@ class DashMCPServer:
             return cached
 
         docsets = []
+        # Search recursively so docsets in subfolders are discovered (Dash 4 layout)
         for docset_dir in self.docsets_path.glob("**/*.docset"):
             db_path = docset_dir / "Contents/Resources/docSet.dsidx"
             docs_path = docset_dir / "Contents/Resources/Documents"
