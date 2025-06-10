@@ -385,7 +385,7 @@ class DashMCPServer:
             return cached
 
         docsets = []
-        for docset_dir in self.docsets_path.glob("*.docset"):
+        for docset_dir in self.docsets_path.glob("**/*.docset"):
             db_path = docset_dir / "Contents/Resources/docSet.dsidx"
             docs_path = docset_dir / "Contents/Resources/Documents"
 
