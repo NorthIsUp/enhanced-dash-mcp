@@ -106,7 +106,8 @@ chmod +x start-dash-mcp-tmux.sh
 
 # Create Claude configuration template
 echo -e "${BLUE}⚙️  Creating Claude configuration template...${NC}"
-cat > claude-mcp-config.json << EOF
+mkdir -p configs
+cat > configs/claude-mcp-config.json << EOF
 {
   "mcpServers": {
     "enhanced-dash-mcp": {
@@ -169,7 +170,7 @@ An intelligent Model Context Protocol server that provides Claude with seamless 
    ```
 
 2. **Configure Claude:**
-   Add the configuration from `claude-mcp-config.json` to Claude's MCP settings
+   Add the configuration from `configs/claude-mcp-config.json` to Claude's MCP settings
 
 3. **Use with Claude:**
    ```

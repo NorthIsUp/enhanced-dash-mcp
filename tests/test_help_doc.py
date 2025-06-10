@@ -16,3 +16,8 @@ def test_help_mentions_initialization_options():
 def test_help_mentions_limit_validation():
     content = HELP_DOC.read_text()
     assert "integer `limit`" in content
+
+
+def test_help_mentions_new_directories():
+    content = HELP_DOC.read_text()
+    assert "scripts/" in content and "configs/" in content
