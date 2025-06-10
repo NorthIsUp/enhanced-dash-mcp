@@ -83,10 +83,10 @@ See [docs/help.md](docs/help.md) for a brief overview of how to run the server.
 mkdir ~/enhanced-dash-mcp && cd ~/enhanced-dash-mcp
 
 # Make setup script executable
-chmod +x setup-dash-mcp.sh
+chmod +x scripts/setup-dash-mcp.sh
 
 # Run automated setup
-./setup-dash-mcp.sh
+./scripts/setup-dash-mcp.sh
 ```
 
 ### 2. **Configure Claude**
@@ -167,8 +167,8 @@ For enhanced Warp Terminal support:
 
 ```bash
 # Run Warp-specific setup
-chmod +x setup-warp-dash-mcp.sh
-./setup-warp-dash-mcp.sh
+chmod +x scripts/setup-warp-dash-mcp.sh
+./scripts/setup-warp-dash-mcp.sh
 
 # Use Command Palette (⌘K):
 dash-mcp-start
@@ -437,3 +437,4 @@ _Transform your development workflow with context-aware documentation that under
 
 - [Changelog and CI](docs/changelog_and_ci.md)
 - [Server Usage](docs/server_usage.md)
+- [AI Agent Guide](AGENTS.md)
