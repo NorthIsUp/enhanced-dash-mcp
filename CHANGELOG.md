@@ -1,6 +1,5 @@
-# Changelog
+#  (2025-06-10)
 
-## [1.2.11](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.11) - 2025-06-10
 
 ### Bug Fixes
 
@@ -36,18 +35,7 @@
 * **server:** ✨ handle cancellation without hang ([48f5ec6](https://github.com/joshuadanpeterson/enhanced-dash-mcp/commit/48f5ec62ece95fd8625bbeee28e688e696ce6d4e))
 * **server:** 🛑 unify cancellation handling ([b1d9693](https://github.com/joshuadanpeterson/enhanced-dash-mcp/commit/b1d96934a14c25059dac61fc72febd5bf33423c9))
 * **server:** 🛠️ ensure Server.run receives streams ([a993850](https://github.com/joshuadanpeterson/enhanced-dash-mcp/commit/a993850b6a707ce3500337850a95aae4e0a7a5c1))
-
-## [1.2.10](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.10) - 2025-05-30
-
-### Maintenance
-
-* Previous release notes preserved for changelog history
-
-## [1.2.9](https://github.com/joshuadanpeterson/enhanced-dash-mcp/releases/tag/v1.2.9) - 2025-05-20
-
-### Maintenance
-
-* Older changelog content retained
+* **structure:** 📁 reorganize project files ([4bc2243](https://github.com/joshuadanpeterson/enhanced-dash-mcp/commit/4bc2243269c5ab335e3b5585580b687cd4620e55))
 
 
 
