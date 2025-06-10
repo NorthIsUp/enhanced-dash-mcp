@@ -35,7 +35,7 @@ This project provides an MCP server that interacts with Dash docsets.
   without extra configuration.
 - The log file now includes startup and shutdown messages and records any unexpected errors.
 
-- Review [CHANGELOG.md](../CHANGELOG.md) for a summary of recent releases.
+- Review [CHANGELOG.md](../CHANGELOG.md) for a summary of recent releases. The changelog lists versions in reverse chronological order so the latest updates appear first and the entire history is retained for reference.
 
 For more detailed usage, see [server_usage.md](server_usage.md).
 - The changelog is automatically updated by GitHub Actions. The workflow now fetches full history so older entries stay intact.

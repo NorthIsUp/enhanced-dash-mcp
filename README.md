@@ -4,7 +4,9 @@
 ![Python](https://img.shields.io/badge/python-3.8+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+See [CHANGELOG.md](CHANGELOG.md) for version history. The changelog lists
+releases in reverse chronological order so you can always view the newest
+changes first while retaining the full history.
 
 An intelligent Model Context Protocol (MCP) server that transforms your local Dash documentation into a powerful, context-aware assistant for Claude. Built for developers who want seamless access to documentation while coding.
 
