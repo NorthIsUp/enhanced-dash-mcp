@@ -1,10 +1,12 @@
 # Enhanced Dash MCP Server
 
-![Version](https://img.shields.io/badge/version-1.2.9-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.12-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+See [CHANGELOG.md](CHANGELOG.md) for version history. The changelog lists
+releases in reverse chronological order so you can always view the newest
+changes first while retaining the full history.
 
 An intelligent Model Context Protocol (MCP) server that transforms your local Dash documentation into a powerful, context-aware assistant for Claude. Built for developers who want seamless access to documentation while coding.
 
@@ -81,10 +83,10 @@ See [docs/help.md](docs/help.md) for a brief overview of how to run the server.
 mkdir ~/enhanced-dash-mcp && cd ~/enhanced-dash-mcp
 
 # Make setup script executable
-chmod +x setup-dash-mcp.sh
+chmod +x scripts/setup-dash-mcp.sh
 
 # Run automated setup
-./setup-dash-mcp.sh
+./scripts/setup-dash-mcp.sh
 ```
 
 ### 2. **Configure Claude**
@@ -165,8 +167,8 @@ For enhanced Warp Terminal support:
 
 ```bash
 # Run Warp-specific setup
-chmod +x setup-warp-dash-mcp.sh
-./setup-warp-dash-mcp.sh
+chmod +x scripts/setup-warp-dash-mcp.sh
+./scripts/setup-warp-dash-mcp.sh
 
 # Use Command Palette (⌘K):
 dash-mcp-start
@@ -435,3 +437,4 @@ _Transform your development workflow with context-aware documentation that under
 
 - [Changelog and CI](docs/changelog_and_ci.md)
 - [Server Usage](docs/server_usage.md)
+- [AI Agent Guide](AGENTS.md)

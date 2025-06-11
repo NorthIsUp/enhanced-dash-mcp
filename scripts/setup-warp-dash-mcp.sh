@@ -467,7 +467,7 @@ EOF
 
 # Copy Warp configuration files to MCP directory
 echo -e "${BLUE}📋 Copying Warp configuration files...${NC}"
-cp warp-mcp-config.json "$MCP_DIR/"
+cp configs/warp-mcp-config.json "$MCP_DIR/"
 
 # Create Powerlevel10k integration (if p10k is detected)
 if command -v p10k >/dev/null 2>&1; then
@@ -564,6 +564,6 @@ echo -e "3. ${YELLOW}Test in Warp:${NC} Press ${BLUE}⌘K${NC} and type ${BLUE}d
 echo -e "4. ${YELLOW}Try with Claude:${NC} ${BLUE}'Analyze my current project and find relevant documentation'${NC}"
 echo ""
 echo -e "${GREEN}📍 Installation summary: $MCP_DIR/warp-installation-summary.md${NC}"
-echo -e "${GREEN}📚 Full documentation: $MCP_DIR/warp-dash-mcp-workflow.md${NC}"
+echo -e "${GREEN}📚 Full documentation: $MCP_DIR/docs/warp-dash-mcp-workflow.md${NC}"
 echo ""
 echo -e "${PURPLE}🚀 Your Warp Terminal is now documentation-aware! Happy coding!${NC}"

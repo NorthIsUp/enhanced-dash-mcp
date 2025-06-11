@@ -1,21 +1,35 @@
-# Project Agents Guide for OpenAI Codex
+# Project Agents.md Guide for OpenAI Codex
 
-This repository is primarily Python code. The guidance below helps Codex work effectively with the project.
+This Agents.md file provides guidance for OpenAI Codex and other AI agents working with this codebase.
 
-## Project Structure
+## Project Structure for OpenAI Codex Navigation
 
-- `enhanced_dash_server.py` – main server implementation
-- `tests/` – pytest suite verifying behaviour
-- `docs/` – documentation for using the server
+- `/enhanced_dash_server.py` – main server implementation
+- `/scripts` – shell scripts for setup and integration
+- `/configs` – configuration templates for external tools
+- `/docs` – user documentation and guides
+- `/AI_Docs` – AI-specific docs and agent guidelines
+- `/Specs` – product requirements and plans
+- `/tests` – pytest suite verifying behaviour
 
-## Coding Conventions
+## Coding Conventions for OpenAI Codex
+
+### General Conventions for Agents.md Implementation
 
 - Use Python 3.8+ syntax
-- Keep functions small and well named
-- Include inline comments for any non-obvious logic
-- Follow the existing import order and code style
+- Keep functions small with meaningful names
+- Include comments for complex logic
+- Follow existing import order and code style
 
-## Testing
+### React Components Guidelines for OpenAI Codex
+
+This project doesn't use React, so ignore these guidelines.
+
+### CSS/Styling Standards for OpenAI Codex
+
+Not applicable.
+
+## Testing Requirements for OpenAI Codex
 
 Run the following commands before committing Python changes:
 
@@ -25,6 +39,22 @@ mypy .
 pytest -q
 ```
 
-## Pull Request Notes
+## Pull Request Guidelines for OpenAI Codex
 
-Summarise changes clearly and update docs where relevant. Ensure new tests cover the behaviour of any new or changed code.
+When creating a PR, ensure it:
+
+1. Includes a clear description of the changes
+2. References any related issues
+3. Ensures all tests pass
+4. Includes screenshots for UI changes
+5. Keeps PRs focused on a single concern
+
+## Programmatic Checks for OpenAI Codex
+
+Before submitting changes, run:
+
+```bash
+flake8 .
+mypy .
+pytest -q
+```

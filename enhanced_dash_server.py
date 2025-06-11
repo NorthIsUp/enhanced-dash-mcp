@@ -102,9 +102,9 @@ Author: Josh (Fort Collins, CO)
 Created for integration with Claude via MCP
 Optimized for Python/JavaScript/React development workflows
 """
-# Bump version after fixing Dash directory structure and database schema handling
+# Merge fix for Dash directory structure and database schema handling with latest version
 # Fix docset discovery and add support for both Core Data and searchIndex schemas
-__version__ = "1.2.9"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.2.12"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib
@@ -385,46 +385,41 @@ class DashMCPServer:
             return cached
 
         docsets = []
-        # Handle Dash directory structure: DocSets/Name/Name.docset/
+        # Handle Dash directory structure: both direct .docset files and nested structure
         if self.docsets_path.exists():
-            for item in self.docsets_path.iterdir():
-                if item.is_dir() and not item.name.startswith('.'):
-                    # Look for docset inside the subdirectory
-                    docset_dir = item / f"{item.name}.docset"
-                    if docset_dir.exists():
-                        db_path = docset_dir / "Contents/Resources/docSet.dsidx"
-                        docs_path = docset_dir / "Contents/Resources/Documents"
+            # Search recursively so docsets in subfolders are discovered (Dash 4 layout)
+            for docset_dir in self.docsets_path.glob("**/*.docset"):
+                db_path = docset_dir / "Contents/Resources/docSet.dsidx"
+                docs_path = docset_dir / "Contents/Resources/Documents"
 
-                        if db_path.exists():
-                            # Get docset info
-                            info_plist = docset_dir / "Contents/Info.plist"
-                            docset_info = {
-                                "name": item.name,  # Use the parent directory name
-                                "db_path": str(db_path),
-                                "docs_path": str(docs_path),
-                                "has_content": docs_path.exists(),
-                            }
+                if db_path.exists():
+                    # Get docset info
+                    info_plist = docset_dir / "Contents/Info.plist"
+                    docset_info = {
+                        "name": docset_dir.parent.name,  # Use the parent directory name
+                        "db_path": str(db_path),
+                        "docs_path": str(docs_path),
+                        "has_content": docs_path.exists(),
+                    }
 
-                            # Try to get display name from plist
-                            if info_plist.exists():
-                                try:
-                                    # Basic plist parsing (you might want to use plistlib)
-                                    with open(info_plist, "r") as f:
-                                        content = f.read()
-                                        if "CFBundleName" in content:
-                                            # Simple extraction
-                                            import re
+                    # Try to get display name from plist
+                    if info_plist.exists():
+                        try:
+                            # Basic plist parsing (you might want to use plistlib)
+                            with open(info_plist, "r") as f:
+                                content = f.read()
+                                if "CFBundleName" in content:
+                                    # Simple extraction
+                                    match = re.search(
+                                        r"<key>CFBundleName</key>\s*<string>([^<]+)</string>",
+                                        content,
+                                    )
+                                    if match:
+                                        docset_info["display_name"] = match.group(1)
+                        except Exception:
+                            pass
 
-                                            match = re.search(
-                                                r"<key>CFBundleName</key>\s*<string>([^<]+)</string>",
-                                                content,
-                                            )
-                                            if match:
-                                                docset_info["display_name"] = match.group(1)
-                                except Exception:
-                                    pass
-
-                            docsets.append(docset_info)
+                    docsets.append(docset_info)
 
         await self.cache.set(cache_key, docsets)
         return docsets

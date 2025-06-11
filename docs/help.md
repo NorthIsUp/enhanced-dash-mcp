@@ -5,7 +5,7 @@ This project provides an MCP server that interacts with Dash docsets.
 - Run the server with `python3 enhanced_dash_server.py`. The script uses
   `stdio_server` internally to expose STDIO streams. Press `Ctrl+C` to
   stop the server gracefully without seeing a stack trace. Since version
-   1.2.8 the server logs startup, shutdown, and unexpected error events, and cancels its tasks properly so startup no longer hangs
+  1.2.11 the server logs startup, shutdown, and unexpected error events, and cancels its tasks properly so startup no longer hangs
   when interrupted. Cancellation for `Ctrl+C` and task timeouts now
   share a single code path via `_cancel_task`.
 - Initialization options are now generated with
@@ -31,8 +31,14 @@ This project provides an MCP server that interacts with Dash docsets.
   path like `.../DocSets/DocSets` and the server won't find your docsets.
 - The server now adjusts automatically if `DASH_DOCSETS_PATH` points to the
   `Dash` directory instead of `DocSets`.
+- Docsets inside subfolders are discovered automatically so Dash 4 layouts work
+  without extra configuration.
 - The log file now includes startup and shutdown messages and records any unexpected errors.
 
-- Review [CHANGELOG.md](../CHANGELOG.md) for a summary of recent releases.
+- Review [CHANGELOG.md](../CHANGELOG.md) for a summary of recent releases. The changelog lists versions in reverse chronological order so the latest updates appear first and the entire history is retained for reference.
 
 For more detailed usage, see [server_usage.md](server_usage.md).
+- The changelog is automatically updated by GitHub Actions. The workflow now fetches full history so older entries stay intact.
+- If the changelog ever appears truncated, run `git fetch --unshallow` before rerunning the workflow to restore the missing history.
+- Shell scripts now live under `scripts/` and configuration templates under `configs/`.
+- See [AGENTS.md](../AGENTS.md) and [AI_Docs/AGENTS.md](../AI_Docs/AGENTS.md) for guidelines on working with this repository using AI tools.
