@@ -14,7 +14,7 @@ Add the MCP server to Warp's configuration:
 // ~/.warp/mcp-servers.json or via Warp Settings > MCP Servers
 {
   "enhanced-dash-mcp": {
-    "config_file": "~/mcp-servers/enhanced-dash-mcp/warp-mcp-config.json",
+    "config_file": "~/enhanced-dash-mcp/warp-mcp-config.json",
     "enabled": true,
     "auto_start": true
   }
@@ -38,7 +38,7 @@ commands:
 
   - name: "dash-mcp-start"
     description: "Start Dash MCP Server"
-    command: "cd ~/mcp-servers/enhanced-dash-mcp && ./start-dash-mcp-tmux.sh"
+    command: "cd ~/enhanced-dash-mcp && ./start-dash-mcp-tmux.sh"
 
   - name: "dash-mcp-status"
     description: "Check Dash MCP Server Status"
@@ -52,7 +52,7 @@ commands:
     description: "Restart Dash MCP Server"
     command: |
       tmux kill-session -t dash-mcp 2>/dev/null || true
-      cd ~/mcp-servers/enhanced-dash-mcp && ./start-dash-mcp-tmux.sh
+      cd ~/enhanced-dash-mcp && ./start-dash-mcp-tmux.sh
       echo "🔄 Dash MCP Server restarted"
 ```
 
@@ -109,7 +109,7 @@ Add these to your `~/.zshrc` for seamless Warp integration:
 
 ```bash
 # Enhanced Dash MCP aliases for Warp Terminal
-export MCP_DASH_DIR="$HOME/mcp-servers/enhanced-dash-mcp/"
+export MCP_DASH_DIR="$DASH_MCP_DIR/"
 
 # Warp-specific aliases with better output formatting
 alias dash-mcp-start='echo "🚀 Starting Dash MCP Server..." && cd $MCP_DASH_DIR && ./start-dash-mcp-tmux.sh'

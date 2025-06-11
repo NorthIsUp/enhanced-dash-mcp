@@ -16,7 +16,9 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}🚀 Setting up Warp Terminal + Enhanced Dash MCP Integration...${NC}"
 
 # Configuration
-MCP_DIR="$HOME/Dropbox/programming/projects/mcp-servers/enhanced-dash-mcp"
+# Dash runs only on macOS, so install under the home directory
+DEFAULT_BASE="$HOME"
+DASH_MCP_DIR="${DASH_MCP_DIR:-${DEFAULT_BASE}/enhanced-dash-mcp}"
 WARP_CONFIG_DIR="$HOME/.warp"
 WARP_MCP_CONFIG="$WARP_CONFIG_DIR/mcp-servers.json"
 WARP_COMMANDS_DIR="$WARP_CONFIG_DIR/commands"
@@ -30,8 +32,8 @@ if ! command -v warp-cli &> /dev/null && [[ ! -d "/Applications/Warp.app" ]]; th
 fi
 
 # Check if main MCP server is set up
-if [[ ! -f "$MCP_DIR/enhanced_dash_server.py" ]]; then
-    echo -e "${RED}❌ Enhanced Dash MCP Server not found at $MCP_DIR${NC}"
+if [[ ! -f "$DASH_MCP_DIR/enhanced_dash_server.py" ]]; then
+    echo -e "${RED}❌ Enhanced Dash MCP Server not found at $DASH_MCP_DIR${NC}"
     echo -e "${RED}   Please run the main setup script first: ./setup-dash-mcp.sh${NC}"
     exit 1
 fi
@@ -51,7 +53,7 @@ cat > "$WARP_MCP_CONFIG" << EOF
 {
   "servers": {
     "enhanced-dash-mcp": {
-      "config_file": "$MCP_DIR/warp-mcp-config.json",
+      "config_file": "$DASH_MCP_DIR/warp-mcp-config.json",
       "enabled": true,
       "auto_start": true,
       "description": "Enhanced Dash Documentation Server with project-aware search"
@@ -79,7 +81,7 @@ commands:
 
   - name: "dash-mcp-start"
     description: "Start Dash MCP Server"
-    command: "cd ~/mcp-servers/enhanced-dash-mcp && ./start-dash-mcp-tmux.sh"
+    command: "cd $DASH_MCP_DIR && ./start-dash-mcp-tmux.sh"
 
   - name: "dash-mcp-status"
     description: "Check Dash MCP Server Status"
@@ -94,7 +96,7 @@ commands:
     command: |
       tmux kill-session -t dash-mcp 2>/dev/null || true
       sleep 1
-      cd ~/mcp-servers/enhanced-dash-mcp && ./start-dash-mcp-tmux.sh
+      cd $DASH_MCP_DIR && ./start-dash-mcp-tmux.sh
       echo "🔄 Dash MCP Server restarted"
 
   - name: "dash-analyze-project"
@@ -239,7 +241,7 @@ EOF
 
 # Create enhanced .zshrc additions for Warp
 echo -e "${BLUE}🐚 Creating enhanced shell configuration...${NC}"
-cat > "$MCP_DIR/warp-zshrc-additions.sh" << 'EOF'
+cat > "$DASH_MCP_DIR/warp-zshrc-additions.sh" << 'EOF'
 # Enhanced Dash MCP Integration for Warp Terminal
 # Add these lines to your ~/.zshrc
 
@@ -250,7 +252,7 @@ if [[ "$TERM_PROGRAM" == "WarpTerminal" ]]; then
 fi
 
 # Enhanced Dash MCP aliases for Warp Terminal
-export MCP_DASH_DIR="$HOME/mcp-servers/enhanced-dash-mcp"
+export MCP_DASH_DIR="$DASH_MCP_DIR"
 
 # Warp-optimized aliases with rich output
 alias dash-mcp-start='echo "🚀 Starting Dash MCP Server..." && cd $MCP_DASH_DIR && ./start-dash-mcp-tmux.sh'
@@ -467,12 +469,12 @@ EOF
 
 # Copy Warp configuration files to MCP directory
 echo -e "${BLUE}📋 Copying Warp configuration files...${NC}"
-cp configs/warp-mcp-config.json "$MCP_DIR/"
+cp configs/warp-mcp-config.json "$DASH_MCP_DIR/"
 
 # Create Powerlevel10k integration (if p10k is detected)
 if command -v p10k >/dev/null 2>&1; then
     echo -e "${BLUE}⚡ Creating Powerlevel10k integration...${NC}"
-    cat > "$MCP_DIR/p10k-dash-mcp.zsh" << 'EOF'
+    cat > "$DASH_MCP_DIR/p10k-dash-mcp.zsh" << 'EOF'
 # Powerlevel10k integration for Dash MCP Server
 # Add this to your ~/.p10k.zsh file
 
@@ -496,7 +498,7 @@ fi
 
 # Create installation summary
 echo -e "${BLUE}📊 Creating installation summary...${NC}"
-cat > "$MCP_DIR/warp-installation-summary.md" << EOF
+cat > "$DASH_MCP_DIR/warp-installation-summary.md" << EOF
 # Warp Terminal + Enhanced Dash MCP Installation Summary
 
 ## ✅ Installation Complete
@@ -506,14 +508,14 @@ cat > "$MCP_DIR/warp-installation-summary.md" << EOF
 - **Warp Commands**: \`$WARP_COMMANDS_DIR/dash-mcp.yaml\`
 - **Warp Blocks**: \`$WARP_BLOCKS_DIR/enhanced-dash-mcp.yaml\`
 - **Warp Workflows**: \`$WARP_WORKFLOWS_DIR/react-dev-dash.yaml\`, \`python-dev-dash.yaml\`
-- **Shell Enhancements**: \`$MCP_DIR/warp-zshrc-additions.sh\`
-$(command -v p10k >/dev/null && echo "- **P10k Integration**: \`$MCP_DIR/p10k-dash-mcp.zsh\`")
+- **Shell Enhancements**: \`$DASH_MCP_DIR/warp-zshrc-additions.sh\`
+$(command -v p10k >/dev/null && echo "- **P10k Integration**: \`$DASH_MCP_DIR/p10k-dash-mcp.zsh\`")
 
 ### Next Steps:
 
 1. **Add shell enhancements to your .zshrc:**
    \`\`\`bash
-   echo "source $MCP_DIR/warp-zshrc-additions.sh" >> ~/.zshrc
+   echo "source $DASH_MCP_DIR/warp-zshrc-additions.sh" >> ~/.zshrc
    source ~/.zshrc
    \`\`\`
 
@@ -523,10 +525,10 @@ $(command -v p10k >/dev/null && echo "- **P10k Integration**: \`$MCP_DIR/p10k-da
    \`\`\`
 
 3. **Configure Claude with MCP** (if not done already):
-   - Add the configuration from \`$MCP_DIR/warp-mcp-config.json\`
+   - Add the configuration from \`$DASH_MCP_DIR/warp-mcp-config.json\`
 
 $(command -v p10k >/dev/null && echo "4. **Optional - Add P10k integration:**
-   - Add the segment from \`$MCP_DIR/p10k-dash-mcp.zsh\` to your \`~/.p10k.zsh\`")
+   - Add the segment from \`$DASH_MCP_DIR/p10k-dash-mcp.zsh\` to your \`~/.p10k.zsh\`")
 
 ### Quick Test:
 \`\`\`bash
@@ -558,12 +560,12 @@ echo ""
 echo -e "${GREEN}🎉 Warp Terminal + Enhanced Dash MCP Integration setup complete!${NC}"
 echo ""
 echo -e "${BLUE}📋 Next steps:${NC}"
-echo -e "1. ${YELLOW}Add shell enhancements:${NC} ${BLUE}echo \"source $MCP_DIR/warp-zshrc-additions.sh\" >> ~/.zshrc && source ~/.zshrc${NC}"
+echo -e "1. ${YELLOW}Add shell enhancements:${NC} ${BLUE}echo \"source $DASH_MCP_DIR/warp-zshrc-additions.sh\" >> ~/.zshrc && source ~/.zshrc${NC}"
 echo -e "2. ${YELLOW}Start MCP server:${NC} ${BLUE}dash-mcp-start${NC}"
 echo -e "3. ${YELLOW}Test in Warp:${NC} Press ${BLUE}⌘K${NC} and type ${BLUE}dash-mcp-status${NC}"
 echo -e "4. ${YELLOW}Try with Claude:${NC} ${BLUE}'Analyze my current project and find relevant documentation'${NC}"
 echo ""
-echo -e "${GREEN}📍 Installation summary: $MCP_DIR/warp-installation-summary.md${NC}"
-echo -e "${GREEN}📚 Full documentation: $MCP_DIR/docs/warp-dash-mcp-workflow.md${NC}"
+echo -e "${GREEN}📍 Installation summary: $DASH_MCP_DIR/warp-installation-summary.md${NC}"
+echo -e "${GREEN}📚 Full documentation: $DASH_MCP_DIR/docs/warp-dash-mcp-workflow.md${NC}"
 echo ""
 echo -e "${PURPLE}🚀 Your Warp Terminal is now documentation-aware! Happy coding!${NC}"
