@@ -21,3 +21,13 @@ def test_help_mentions_limit_validation():
 def test_help_mentions_new_directories():
     content = HELP_DOC.read_text()
     assert "scripts/" in content and "configs/" in content
+
+
+def test_help_mentions_dash_mcp_dir_variable():
+    content = HELP_DOC.read_text()
+    assert "DASH_MCP_DIR" in content
+
+
+def test_help_mentions_default_directory():
+    content = HELP_DOC.read_text()
+    assert "enhanced-dash-mcp" in content

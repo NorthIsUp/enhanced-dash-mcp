@@ -1,9 +1,9 @@
 {
   "mcpServers": {
     "dash-docs": {
-      "command": "python3",
+      "command": "$DASH_MCP_DIR/venv/bin/python3",
       "args": [
-        "/Users/joshpeterson/Dropbox/programming/projects/mcp-servers/enhanced-dash-mcp/enhanced_dash_server.py"
+        "$DASH_MCP_DIR/enhanced_dash_server.py"
       ],
       "env": {},
       "description": "Enhanced Dash Documentation Server with project-aware search, fuzzy matching, and content extraction"

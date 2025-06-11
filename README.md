@@ -88,6 +88,8 @@ chmod +x scripts/setup-dash-mcp.sh
 # Run automated setup
 ./scripts/setup-dash-mcp.sh
 ```
+The script prompts for an installation directory. Press **Enter** to accept the
+default path or provide a custom location. The default is `~/enhanced-dash-mcp`.
 
 ### 2. **Configure Claude**
 
@@ -97,9 +99,9 @@ Add this to Claude's MCP settings:
 {
   "mcpServers": {
     "enhanced-dash-mcp": {
-      "command": "python3",
+      "command": "$DASH_MCP_DIR/venv/bin/python3",
       "args": [
-        "/Users/your-username/mcp-servers/enhanced-dash-mcp/enhanced_dash_server.py"
+        "$DASH_MCP_DIR/enhanced_dash_server.py"
       ],
       "env": {}
     }
@@ -111,7 +113,7 @@ Add this to Claude's MCP settings:
 
 ```bash
 # Add shell enhancements
-echo "source ~/mcp-servers/enhanced-dash-mcp/dash-mcp-aliases.sh" >> ~/.zshrc
+echo "source ~/enhanced-dash-mcp/dash-mcp-aliases.sh" >> ~/.zshrc
 source ~/.zshrc
 
 # Start the server
@@ -315,14 +317,14 @@ ls ~/Library/Application\ Support/Dash/DocSets/
 ```bash
 # Check Python environment
 which python3
-source ~/mcp-servers/enhanced-dash-mcp/venv/bin/activate
+source ~/enhanced-dash-mcp/venv/bin/activate
 ```
 
 **❌ "Import errors"**
 
 ```bash
 # Reinstall dependencies
-cd ~/mcp-servers/enhanced-dash-mcp
+cd ~/enhanced-dash-mcp
 source venv/bin/activate
 pip install -r requirements.txt
 ```
@@ -417,8 +419,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ### **v1.2 - Extended Platform Support**
 
-- [ ] Linux support with Zeal integration
-- [ ] Windows support with alternative doc browsers
 - [ ] VS Code extension for direct editor integration
 
 ### **v1.3 - Advanced Features**

@@ -15,13 +15,18 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-MCP_DIR="$HOME/Dropbox/programming/projects/mcp-servers/enhanced-dash-mcp"
+# Installation directory for the Dash MCP Server
+# Dash is macOS-only, so use the home directory as the base.
+DEFAULT_BASE="$HOME"
+DEFAULT_DIR="${DASH_MCP_DIR:-${DEFAULT_BASE}/enhanced-dash-mcp}"
+read -r -p "Enter installation directory [${DEFAULT_DIR}]: " INPUT_DIR
+DASH_MCP_DIR="${INPUT_DIR:-$DEFAULT_DIR}"
 SCRIPT_NAME="enhanced_dash_server.py"
 REQUIREMENTS_FILE="requirements.txt"
 
 # Create MCP servers directory
 echo -e "${BLUE}📁 Creating MCP server directory...${NC}"
-mkdir -p "$MCP_DIR"
+mkdir -p "$DASH_MCP_DIR"
 
 # Check if Dash is installed and has docsets
 DASH_DOCSETS_PATH="$HOME/Library/Application Support/Dash/DocSets"
@@ -37,12 +42,12 @@ fi
 
 # Copy files to MCP directory
 echo -e "${BLUE}📋 Copying server files...${NC}"
-cp "$SCRIPT_NAME" "$MCP_DIR/"
-cp "$REQUIREMENTS_FILE" "$MCP_DIR/"
+cp "$SCRIPT_NAME" "$DASH_MCP_DIR/"
+cp "$REQUIREMENTS_FILE" "$DASH_MCP_DIR/"
 
 # Create Python virtual environment
 echo -e "${BLUE}🐍 Creating Python virtual environment...${NC}"
-cd "$MCP_DIR"
+cd "$DASH_MCP_DIR"
 python3 -m venv venv
 source venv/bin/activate
 
@@ -111,8 +116,8 @@ cat > configs/claude-mcp-config.json << EOF
 {
   "mcpServers": {
     "enhanced-dash-mcp": {
-      "command": "python3",
-      "args": ["$MCP_DIR/enhanced_dash_server.py"],
+      "command": "$DASH_MCP_DIR/venv/bin/python3",
+      "args": ["$DASH_MCP_DIR/enhanced_dash_server.py"],
       "env": {},
       "description": "Enhanced Dash Documentation Server with project-aware search"
     }
@@ -127,7 +132,7 @@ cat > dash-mcp-aliases.sh << 'EOF'
 # Add these to your ~/.zshrc or ~/.bashrc
 
 # Start Dash MCP server
-alias dash-mcp-start="cd '$MCP_DIR' && ./start-dash-mcp-tmux.sh"
+alias dash-mcp-start="cd '$DASH_MCP_DIR' && ./start-dash-mcp-tmux.sh"
 
 # Attach to running server
 alias dash-mcp-attach="tmux attach -t dash-mcp"
@@ -142,7 +147,7 @@ alias dash-mcp-stop="tmux kill-session -t dash-mcp"
 alias dash-mcp-status="tmux has-session -t dash-mcp && echo 'Running' || echo 'Stopped'"
 
 # Open MCP directory
-alias dash-mcp-dir="cd '$MCP_DIR'"
+alias dash-mcp-dir="cd '$DASH_MCP_DIR'"
 EOF
 
 # Create documentation
@@ -227,12 +232,12 @@ echo ""
 echo -e "${GREEN}🎉 Enhanced Dash MCP Server setup complete!${NC}"
 echo ""
 echo -e "${BLUE}📋 Next steps:${NC}"
-echo -e "1. ${YELLOW}Configure Claude:${NC} Add the config from ${BLUE}$MCP_DIR/claude-mcp-config.json${NC}"
-echo -e "2. ${YELLOW}Add aliases:${NC} Source ${BLUE}$MCP_DIR/dash-mcp-aliases.sh${NC} in your ~/.zshrc"
-echo -e "3. ${YELLOW}Start server:${NC} Run ${BLUE}cd $MCP_DIR && ./start-dash-mcp-tmux.sh${NC}"
+echo -e "1. ${YELLOW}Configure Claude:${NC} Add the config from ${BLUE}$DASH_MCP_DIR/claude-mcp-config.json${NC}"
+echo -e "2. ${YELLOW}Add aliases:${NC} Source ${BLUE}$DASH_MCP_DIR/dash-mcp-aliases.sh${NC} in your ~/.zshrc"
+echo -e "3. ${YELLOW}Start server:${NC} Run ${BLUE}cd $DASH_MCP_DIR && ./start-dash-mcp-tmux.sh${NC}"
 echo -e "4. ${YELLOW}Test with Claude:${NC} Try 'Search for React useState documentation'"
 echo ""
-echo -e "${GREEN}📍 Server location: $MCP_DIR${NC}"
-echo -e "${GREEN}📚 Documentation: $MCP_DIR/README.md${NC}"
+echo -e "${GREEN}📍 Server location: $DASH_MCP_DIR${NC}"
+echo -e "${GREEN}📚 Documentation: $DASH_MCP_DIR/README.md${NC}"
 echo ""
 echo -e "${BLUE}Happy coding! 🚀${NC}"

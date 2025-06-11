@@ -42,4 +42,9 @@ For more detailed usage, see [server_usage.md](server_usage.md).
 - If the changelog ever appears truncated, run `git fetch --unshallow` before rerunning the workflow to restore the missing history.
 - Version 1.2.12 restored the full changelog history.
 - Shell scripts now live under `scripts/` and configuration templates under `configs/`.
+- The Claude configuration template (`configs/claude-mcp-config.json`) uses `venv/bin/python3` so you don't need to activate the virtual environment when starting the server through Claude.
+- The setup scripts define `DASH_MCP_DIR` as the installation path and all generated files reference this variable.
+- During setup you can enter a custom installation path when prompted. Press
+  **Enter** to accept the default location.
+- By default the script installs to `~/enhanced-dash-mcp`.
 - See [AGENTS.md](../AGENTS.md) and [AI_Docs/AGENTS.md](../AI_Docs/AGENTS.md) for guidelines on working with this repository using AI tools.
