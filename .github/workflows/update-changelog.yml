@@ -19,7 +19,8 @@ jobs:
       - name: Install changelog generator
         run: npm install -g conventional-changelog-cli
       - name: Generate CHANGELOG
-        run: conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+        # Append new release notes without rewriting existing history
+        run: conventional-changelog -p angular -i CHANGELOG.md -s -r 1
       - name: Commit changes
         run: |
           git config user.name 'github-actions'

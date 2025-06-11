@@ -483,7 +483,7 @@ class DashMCPServer:
                                 anchor=row[3] if len(row) > 3 else None,
                             )
                             all_entries.append(entry)
-                    
+
                     elif "ZTOKEN" in tables and "ZTOKENTYPE" in tables:
                         # Core Data schema (newer Dash versions)
                         try:
@@ -492,12 +492,12 @@ class DashMCPServer:
                             SELECT t.ZTOKENNAME as name, tt.ZTYPENAME as type, t.ZPATH as path
                             FROM ZTOKEN t
                             LEFT JOIN ZTOKENTYPE tt ON t.ZTOKENTYPE = tt.Z_PK
-                            WHERE t.ZTOKENNAME LIKE ? 
+                            WHERE t.ZTOKENNAME LIKE ?
                             LIMIT ?
                             """
-                            
+
                             cursor.execute(sql, (f"%{query}%", limit * 2))
-                            
+
                             for row in cursor.fetchall():
                                 if row[0]:  # Ensure name is not None
                                     entry = DocEntry(
@@ -523,7 +523,7 @@ class DashMCPServer:
                                         all_entries.append(entry)
                             except sqlite3.Error:
                                 logger.warning("Fallback query also failed for %s", docset["name"])
-                    
+
                     else:
                         logger.warning("Unknown database schema for docset %s. Tables: %s", docset["name"], tables)
 

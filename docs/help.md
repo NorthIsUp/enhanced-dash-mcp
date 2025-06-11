@@ -38,7 +38,8 @@ This project provides an MCP server that interacts with Dash docsets.
 - Review [CHANGELOG.md](../CHANGELOG.md) for a summary of recent releases. The changelog lists versions in reverse chronological order so the latest updates appear first and the entire history is retained for reference.
 
 For more detailed usage, see [server_usage.md](server_usage.md).
-- The changelog is automatically updated by GitHub Actions. The workflow now fetches full history so older entries stay intact.
+- The changelog is automatically updated by GitHub Actions. The workflow now fetches full history so older entries stay intact and appends only the latest release notes.
 - If the changelog ever appears truncated, run `git fetch --unshallow` before rerunning the workflow to restore the missing history.
+- Version 1.2.12 restored the full changelog history.
 - Shell scripts now live under `scripts/` and configuration templates under `configs/`.
 - See [AGENTS.md](../AGENTS.md) and [AI_Docs/AGENTS.md](../AI_Docs/AGENTS.md) for guidelines on working with this repository using AI tools.
