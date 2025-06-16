@@ -348,17 +348,18 @@ class DashMCPServer:
 
     def __init__(self):
         env_path = os.getenv("DASH_DOCSETS_PATH")
+        # Default to Dash root directory to discover all docsets, not just DocSets subdirectory
         self.docsets_path = (
             Path(env_path)
             if env_path
-            else Path.home() / "Library/Application Support/Dash/DocSets"
+            else Path.home() / "Library/Application Support/Dash"
         )
 
-        # Resolve symlinks and handle paths that point to the parent "Dash" directory
+        # Resolve symlinks and handle paths that point to specific subdirectories
         adjusted_path = self.docsets_path.resolve()
-        if adjusted_path.name != "DocSets" and (adjusted_path / "DocSets").exists():
-            # User supplied Dash root; use its DocSets folder instead
-            adjusted_path = adjusted_path / "DocSets"
+        if adjusted_path.name == "DocSets" and (adjusted_path.parent / "DocSets").exists():
+            # User supplied DocSets folder; use parent Dash directory for broader discovery
+            adjusted_path = adjusted_path.parent
         self.docsets_path = adjusted_path
 
         logger.info("Using docset directory %s", self.docsets_path)
@@ -395,11 +396,14 @@ class DashMCPServer:
                 if db_path.exists():
                     # Get docset info
                     info_plist = docset_dir / "Contents/Info.plist"
+                    # Extract name from .docset directory name (remove .docset extension)
+                    docset_name = docset_dir.name.replace(".docset", "")
                     docset_info = {
-                        "name": docset_dir.parent.name,  # Use the parent directory name
+                        "name": docset_name,
                         "db_path": str(db_path),
                         "docs_path": str(docs_path),
                         "has_content": docs_path.exists(),
+                        "category": docset_dir.parent.name,  # Add category info (DocSets, User Contributed, etc.)
                     }
 
                     # Try to get display name from plist
