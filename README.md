@@ -1,6 +1,6 @@
 # Enhanced Dash MCP Server
 
-![Version](https://img.shields.io/badge/version-1.2.12-blue.svg)
+![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
@@ -73,6 +73,25 @@ The setup script automatically installs all required dependencies, including:
 - `typing-extensions>=4.12.0` - Extended type hints
 
 ## ⚡ Quick Start
+
+### 🔄 **Important: Cache Clearing for Existing Users**
+
+**If you're upgrading from a previous version**, the server now discovers 8x more docsets (364 instead of 45) by searching the entire Dash directory tree. To see all the new docsets, clear the cache:
+
+```bash
+# Clear the docset cache to discover newly available docsets
+rm -rf ~/.cache/dash-mcp/
+
+# Then restart your server
+dash-mcp-restart
+# or
+cd ~/enhanced-dash-mcp && ./start-dash-mcp.sh --test
+```
+
+**What changed:**
+- **Before**: Searched only `~/Library/Application Support/Dash/DocSets/` (45 docsets)
+- **After**: Searches entire `~/Library/Application Support/Dash/` directory (364 docsets)
+- **Benefit**: Now includes User Contributed, Python DocSets, Versioned DocSets, and more!
 
 See [docs/help.md](docs/help.md) for a brief overview of how to run the server.
 
