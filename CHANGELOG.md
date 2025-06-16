@@ -1,3 +1,49 @@
+# Enhanced Dash MCP Server Changelog
+
+## [1.3.1] - 2025-06-16
+
+### ⚠️ **Important: Cache Clearing Required for v1.3.0+ Users**
+
+If you're upgrading from a previous version, clear your cache to discover the expanded docsets:
+
+```bash
+rm -rf ~/.cache/dash-mcp/
+```
+
+Version 1.3.0+ expands docset discovery from 45 to 364 docsets by searching the entire Dash directory tree.
+
+### Bug Fixes
+
+* **setup:** 🔧 add comprehensive logging and timeout handling to prevent setup hanging in Codex environments
+* **scripts:** ⚙️ enhanced error handling with detailed progress indicators and graceful cleanup
+* **debugging:** 📊 new test-pip-install.sh script for isolated pip installation testing
+
+### Features
+
+* **logging:** 📊 timestamped logs for every setup operation with clear progress feedback
+* **timeouts:** ⏱️ pip operations now have 5-10 minute timeouts to prevent indefinite hanging
+* **validation:** ✅ comprehensive file and environment validation before operations
+* **cleanup:** 🧹 signal handling for graceful cleanup on script interruption
+
+### Developer Experience Improvements
+
+* Enhanced setup script with verbose output and error diagnostics
+* Fallback mechanisms for pip installation with alternative methods
+* Real-time progress indicators during long operations
+* Standalone pip test script to debug installation issues separately
+
+---
+
+## [1.3.0] - 2025-06-16
+
+### Major Features
+
+* **docsets:** 🚀 expand docset discovery to entire Dash directory tree - 8x more docsets (364 vs 45)
+* **scripts:** 🛠️ resolve script stalling issues in Codex environments with test mode validation
+* **project:** ✨ add project configuration and startup scripts with improved error handling
+
+---
+
 #  (2025-06-16)
 
 

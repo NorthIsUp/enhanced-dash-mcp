@@ -104,7 +104,7 @@ Optimized for Python/JavaScript/React development workflows
 """
 # Merge fix for Dash directory structure and database schema handling with latest version
 # Fix docset discovery and add support for both Core Data and searchIndex schemas
-__version__ = "1.3.0"  # Project version for SemVer and CHANGELOG automation
+__version__ = "1.3.1"  # Project version for SemVer and CHANGELOG automation
 
 import asyncio
 import contextlib

@@ -5,7 +5,33 @@
 
 set -e
 
-echo "🚀 Setting up Enhanced Dash MCP Server..."
+# Signal handling for graceful cleanup
+cleanup() {
+    log_error "Setup interrupted by user or system"
+    echo -e "${RED}\n❌ Setup interrupted!${NC}"
+    echo -e "${YELLOW}Cleaning up partial installation...${NC}"
+    if [ -n "$DASH_MCP_DIR" ] && [ -d "$DASH_MCP_DIR" ]; then
+        echo "Partial installation directory: $DASH_MCP_DIR"
+        echo "You may want to remove it and start over."
+    fi
+    exit 1
+}
+
+# Trap signals
+trap cleanup INT TERM
+
+# Add verbose logging function
+log_step() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [SETUP] $1"
+}
+
+log_error() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [ERROR] $1" >&2
+}
+
+log_step "🚀 Starting Enhanced Dash MCP Server setup..."
+log_step "📍 Script location: $(pwd)"
+log_step "🖥️  System: $(uname -s) $(uname -r)"
 
 # Colors for output
 RED='\033[0;31m'
@@ -25,8 +51,10 @@ SCRIPT_NAME="enhanced_dash_server.py"
 REQUIREMENTS_FILE="requirements.txt"
 
 # Create MCP servers directory
+log_step "📁 Creating MCP server directory: $DASH_MCP_DIR"
 echo -e "${BLUE}📁 Creating MCP server directory...${NC}"
 mkdir -p "$DASH_MCP_DIR"
+log_step "✅ Directory created successfully"
 
 # Check if Dash is installed and has docsets
 DASH_DOCSETS_PATH="$HOME/Library/Application Support/Dash/DocSets"
@@ -41,20 +69,110 @@ else
 fi
 
 # Copy files to MCP directory
+log_step "📋 Starting file copy operations"
 echo -e "${BLUE}📋 Copying server files...${NC}"
+if [ ! -f "$SCRIPT_NAME" ]; then
+    log_error "Script file $SCRIPT_NAME not found in current directory"
+    echo -e "${RED}❌ Error: $SCRIPT_NAME not found${NC}"
+    exit 1
+fi
+if [ ! -f "$REQUIREMENTS_FILE" ]; then
+    log_error "Requirements file $REQUIREMENTS_FILE not found in current directory"
+    echo -e "${RED}❌ Error: $REQUIREMENTS_FILE not found${NC}"
+    exit 1
+fi
 cp "$SCRIPT_NAME" "$DASH_MCP_DIR/"
 cp "$REQUIREMENTS_FILE" "$DASH_MCP_DIR/"
+log_step "✅ Files copied successfully"
 
 # Create Python virtual environment
+log_step "🐍 Starting Python virtual environment creation"
 echo -e "${BLUE}🐍 Creating Python virtual environment...${NC}"
 cd "$DASH_MCP_DIR"
-python3 -m venv venv
+log_step "📍 Changed to directory: $(pwd)"
+log_step "🐍 Running: python3 -m venv venv"
+if ! python3 -m venv venv; then
+    log_error "Failed to create virtual environment"
+    echo -e "${RED}❌ Error: Failed to create virtual environment${NC}"
+    echo -e "${YELLOW}Try: python3 --version to check Python installation${NC}"
+    exit 1
+fi
+log_step "✅ Virtual environment created successfully"
+
+log_step "🔄 Activating virtual environment"
 source venv/bin/activate
+if [ -z "$VIRTUAL_ENV" ]; then
+    log_error "Virtual environment activation failed"
+    echo -e "${RED}❌ Error: Virtual environment not activated${NC}"
+    exit 1
+fi
+log_step "✅ Virtual environment activated: $VIRTUAL_ENV"
 
 # Install dependencies
-echo -e "${BLUE}📦 Installing dependencies...${NC}"
-pip install --upgrade pip
-pip install -r requirements.txt
+log_step "📦 Starting dependency installation"
+echo -e "${BLUE}📦 Installing dependencies (this may take a few minutes)...${NC}"
+
+# Function to run pip with timeout and better error handling
+run_pip_with_timeout() {
+    local timeout_seconds=$1
+    shift
+    local cmd="$@"
+    
+    log_step "⏱️  Running: pip $cmd (timeout: ${timeout_seconds}s)"
+    
+    # Use timeout command to prevent hanging
+    if command -v timeout >/dev/null 2>&1; then
+        if timeout "$timeout_seconds" pip $cmd; then
+            return 0
+        else
+            local exit_code=$?
+            if [ $exit_code -eq 124 ]; then
+                log_error "Command timed out after ${timeout_seconds} seconds"
+                echo -e "${RED}❌ Installation timed out. This might indicate network issues.${NC}"
+            else
+                log_error "Command failed with exit code: $exit_code"
+            fi
+            return $exit_code
+        fi
+    else
+        # Fallback without timeout (macOS doesn't have timeout by default)
+        log_step "⚠️  Running without timeout (timeout command not available)"
+        pip $cmd
+        return $?
+    fi
+}
+
+log_step "🔄 Upgrading pip"
+echo "Upgrading pip (timeout: 5 minutes)..."
+if ! run_pip_with_timeout 300 "install --upgrade pip --no-cache-dir --progress-bar on"; then
+    log_error "Failed to upgrade pip"
+    echo -e "${RED}❌ Error: pip upgrade failed${NC}"
+    echo -e "${YELLOW}Trying alternative pip upgrade method...${NC}"
+    if ! python3 -m pip install --upgrade pip --no-cache-dir; then
+        log_error "Alternative pip upgrade also failed"
+        echo -e "${RED}❌ Error: Could not upgrade pip${NC}"
+        exit 1
+    fi
+fi
+log_step "✅ pip upgraded successfully"
+
+log_step "📦 Installing requirements from $REQUIREMENTS_FILE"
+echo "Installing Python packages (timeout: 10 minutes)..."
+echo "Dependencies to install:"
+cat requirements.txt
+echo ""
+echo "Starting installation - this may take several minutes..."
+if ! run_pip_with_timeout 600 "install -r requirements.txt --no-cache-dir --progress-bar on"; then
+    log_error "Failed to install dependencies"
+    echo -e "${RED}❌ Error: Dependency installation failed${NC}"
+    echo -e "${YELLOW}Possible causes:${NC}"
+    echo -e "  - Network connectivity issues"
+    echo -e "  - PyPI server problems"
+    echo -e "  - Package version conflicts"
+    echo -e "${YELLOW}Try running the script again or check your internet connection${NC}"
+    exit 1
+fi
+log_step "✅ All dependencies installed successfully"
 
 # Create startup script
 echo -e "${BLUE}🔧 Creating startup script...${NC}"
@@ -253,11 +371,25 @@ The server automatically detects:
 Perfect for your Fort Collins development workflow!
 EOF
 
+# Final validation test
+log_step "🧪 Running final validation test"
+echo -e "${BLUE}🧪 Testing server installation...${NC}"
+if python3 enhanced_dash_server.py --test; then
+    log_step "✅ Server validation test passed"
+    echo -e "${GREEN}✅ Server test passed!${NC}"
+else
+    log_error "Server validation test failed"
+    echo -e "${RED}❌ Server test failed - check installation${NC}"
+    echo -e "${YELLOW}Check logs above for errors${NC}"
+    exit 1
+fi
+
+log_step "🎉 Setup completed successfully"
 echo ""
 echo -e "${GREEN}🎉 Enhanced Dash MCP Server setup complete!${NC}"
 echo ""
 echo -e "${BLUE}📋 Next steps:${NC}"
-echo -e "1. ${YELLOW}Configure Claude:${NC} Add the config from ${BLUE}$DASH_MCP_DIR/claude-mcp-config.json${NC}"
+echo -e "1. ${YELLOW}Configure Claude:${NC} Add the config from ${BLUE}$DASH_MCP_DIR/configs/claude-mcp-config.json${NC}"
 echo -e "2. ${YELLOW}Add aliases:${NC} Source ${BLUE}$DASH_MCP_DIR/dash-mcp-aliases.sh${NC} in your ~/.zshrc"
 echo -e "3. ${YELLOW}Start server:${NC} Run ${BLUE}cd $DASH_MCP_DIR && ./start-dash-mcp-tmux.sh${NC}"
 echo -e "4. ${YELLOW}Test with Claude:${NC} Try 'Search for React useState documentation'"
@@ -265,4 +397,5 @@ echo ""
 echo -e "${GREEN}📍 Server location: $DASH_MCP_DIR${NC}"
 echo -e "${GREEN}📚 Documentation: $DASH_MCP_DIR/README.md${NC}"
 echo ""
+log_step "🏁 Setup script completed at $(date)"
 echo -e "${BLUE}Happy coding! 🚀${NC}"
