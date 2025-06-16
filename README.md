@@ -245,6 +245,200 @@ Add MCP server status to your prompt:
 # Configurable for performance vs. detail trade-off
 ```
 
+## 🤖 Automation & Non-Interactive Operation
+
+The Enhanced Dash MCP server features comprehensive automation detection and non-interactive operation capabilities, making it suitable for CI/CD pipelines, deployment scripts, and containerized environments.
+
+### **🔍 Interactive Mode Detection Logic**
+
+The server uses an 8-phase detection sequence to determine whether it's running in interactive or automated mode:
+
+#### **Phase 1: CI Environment Detection**
+Checks for continuous integration indicators:
+```bash
+# Primary CI Variables
+CI, CONTINUOUS_INTEGRATION, GITHUB_ACTIONS, GITLAB_CI, JENKINS_URL
+TRAVIS, CIRCLECI, BUILDKITE, DRONE, BITBUCKET_BUILD_NUMBER
+AZURE_HTTP_USER_AGENT, CODEBUILD_BUILD_ID, TEAMCITY_VERSION
+# And 15+ more CI environment variables
+```
+
+#### **Phase 2: Automation Environment Detection**
+Identifies automated/batch processing:
+```bash
+# Automation Indicators
+AUTOMATION, AUTOMATED, NON_INTERACTIVE, BATCH_MODE, HEADLESS
+CRON, SYSTEMD_EXEC_PID, KUBERNETES_SERVICE_HOST, DOCKER_CONTAINER
+AWS_EXECUTION_ENV, LAMBDA_RUNTIME_DIR, GOOGLE_CLOUD_PROJECT
+# Cloud platforms: Heroku, Vercel, Netlify, Railway, etc.
+```
+
+#### **Phase 3-8: Terminal & Process Environment**
+- **Terminal Type**: Validates `TERM` environment (rejects `dumb`, `unknown`)
+- **Shell Capabilities**: Checks for interactive shell support
+- **TTY Stream Detection**: Verifies STDIN/STDOUT/STDERR are connected to terminals
+- **Process Environment**: Detects daemon processes, nohup, orphaned processes
+- **SSH Connections**: Validates TTY allocation in remote connections
+- **Session Management**: Recognizes tmux/screen sessions
+
+### **📊 Automation Behavior Matrix**
+
+| Environment Type | Detection Method | Behavior | Logging Level |
+|------------------|------------------|----------|---------------|
+| **GitHub Actions** | `GITHUB_ACTIONS=true` | Silent, no prompts | INFO |
+| **GitLab CI** | `GITLAB_CI=true` | Silent, no prompts | INFO |
+| **Docker Build** | `CONTAINER=true` or non-TTY | Silent, no prompts | INFO |
+| **Cron Jobs** | `CRON=true` or non-TTY | Silent operation | INFO |
+| **SSH Scripts** | `SSH_CONNECTION` without `SSH_TTY` | Non-interactive | INFO |
+| **Kubernetes** | `KUBERNETES_SERVICE_HOST` | Pod-aware operation | INFO |
+| **AWS Lambda** | `LAMBDA_RUNTIME_DIR` | Serverless mode | DEBUG |
+| **Local Terminal** | TTY + interactive shell | Full interaction | DEBUG |
+
+### **⚙️ Automation-Specific Features**
+
+#### **Timeout Protection**
+```bash
+# All operations have built-in timeouts
+Pip installations: 5-10 minute limits
+User prompts: 10-second timeout with auto-defaults
+Server startup: Quick validation mode for testing
+Network operations: Configurable timeouts
+```
+
+#### **Signal Handling**
+```bash
+# Graceful shutdown in automation
+SIGINT/SIGTERM: Clean resource cleanup
+Keyboard interrupts: Logged and handled gracefully
+Partial operations: Automatic rollback/cleanup
+Exit codes: Standard automation-friendly codes
+```
+
+#### **Non-Interactive Setup**
+```bash
+# Setup script automation modes
+./scripts/setup-dash-mcp.sh    # Auto-detects environment
+CI=true ./scripts/setup-dash-mcp.sh    # Force CI mode
+BATCH_MODE=true ./scripts/setup-dash-mcp.sh    # Force batch mode
+```
+
+### **🔒 Security & Safety**
+
+#### **Environment Validation**
+- **Path Sanitization**: Validates and sanitizes all file paths
+- **Input Validation**: Comprehensive query and parameter validation
+- **Resource Limits**: Memory and CPU usage constraints
+- **Rate Limiting**: Built-in request rate limiting (100 calls/minute)
+
+#### **Error Recovery**
+```bash
+# Robust error handling
+Partial installations: Automatic cleanup
+Network failures: Retry mechanisms with backoff
+Corrupted cache: Automatic cache rebuilding
+Docset issues: Graceful degradation
+```
+
+### **📈 Performance in Automation**
+
+#### **Benchmarks**
+```bash
+# Automation environment performance
+CI installation time: ~70-80 seconds
+Server validation: ~2-3 seconds
+Docset discovery: ~500ms (first run), ~50ms (cached)
+Timeout response: ~5 seconds maximum
+Clean environment setup: ~70-75 seconds
+```
+
+#### **Optimization for Automation**
+- **Parallel Operations**: Concurrent docset scanning and validation
+- **Smart Caching**: Persistent cache survives container restarts
+- **Lazy Loading**: On-demand content extraction
+- **Memory Management**: Automatic cleanup of large operations
+
+### **🛠️ Automation Testing**
+
+The server includes comprehensive automation testing:
+
+```bash
+# Quick CI compatibility test
+./test-ci-automation.sh
+
+# Comprehensive automation validation
+./test-final-validation.sh
+
+# Individual component testing
+./scripts/test-pip-install.sh
+CI=true ./scripts/setup-dash-mcp.sh
+env -i PATH=/usr/bin:/bin HOME=$HOME CI=true ./scripts/setup-dash-mcp.sh
+```
+
+#### **Test Coverage**
+- ✅ **CI Environment Tests**: GitHub Actions, GitLab CI, Jenkins
+- ✅ **Container Tests**: Docker builds, Kubernetes pods
+- ✅ **Timeout Mechanism Tests**: All operations respect timeouts
+- ✅ **Signal Handling Tests**: Graceful interruption and cleanup
+- ✅ **Environment Detection Tests**: All 26+ environment variables
+- ✅ **Non-Interactive Tests**: Stdin redirection, batch mode
+
+### **📋 Deployment Examples**
+
+#### **GitHub Actions Workflow**
+```yaml
+- name: Setup Enhanced Dash MCP
+  run: |
+    git clone <repository-url>
+    cd enhanced-dash-mcp
+    CI=true ./scripts/setup-dash-mcp.sh
+    # No prompts, automatic defaults
+```
+
+#### **Docker Container**
+```dockerfile
+RUN git clone <repository-url> && \\
+    cd enhanced-dash-mcp && \\
+    CONTAINER=true ./scripts/setup-dash-mcp.sh
+# Detects container environment automatically
+```
+
+#### **Kubernetes Job**
+```yaml
+command: ["/bin/bash", "-c"]
+args:
+  - |
+    cd /app/enhanced-dash-mcp
+    KUBERNETES_SERVICE_HOST=true ./scripts/setup-dash-mcp.sh
+    python3 enhanced_dash_server.py --test
+```
+
+### **🔍 Debugging Automation Issues**
+
+#### **Log Analysis**
+```bash
+# View detailed environment detection logs
+export DASH_MCP_LOG_LEVEL=DEBUG
+python3 enhanced_dash_server.py --test
+
+# Check automation detection reasoning
+grep "Detection reason" ~/.cache/dash-mcp/server.log
+
+# Verify environment variables
+grep "Environment summary" ~/.cache/dash-mcp/server.log
+```
+
+#### **Common Automation Scenarios**
+```bash
+# Force interactive mode (testing)
+export FORCE_INTERACTIVE=true
+
+# Override environment detection
+export DASH_MCP_MODE=interactive  # or 'automation'
+
+# Detailed process information
+export DASH_MCP_DEBUG_PROCESS=true
+```
+
 ## 🏗️ Architecture
 
 ### **Core Components**

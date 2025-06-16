@@ -57,17 +57,51 @@ NC='\033[0m' # No Color
 DEFAULT_BASE="$HOME"
 DEFAULT_DIR="${DASH_MCP_DIR:-${DEFAULT_BASE}/enhanced-dash-mcp}"
 
-# Check if running in an automated environment (like Codex)
-if [ -t 0 ]; then
-    # Interactive terminal - prompt for directory
-    log_step "💬 Prompting user for installation directory"
-    read -r -p "Enter installation directory [${DEFAULT_DIR}]: " INPUT_DIR
-    DASH_MCP_DIR="${INPUT_DIR:-$DEFAULT_DIR}"
-else
-    # Non-interactive environment - use default
-    log_step "🤖 Non-interactive environment detected, using default directory"
-    DASH_MCP_DIR="$DEFAULT_DIR"
-fi
+# Centralized directory selection function
+select_installation_directory() {
+    local reason=""
+    
+    # Check for non-interactive conditions
+    if [ ! -t 0 ]; then
+        reason="Non-interactive environment detected (stdin not a tty)"
+    elif [ -n "$CI" ]; then
+        reason="CI environment detected"
+    elif [ -n "$BATCH_MODE" ]; then
+        reason="Batch mode environment variable set"
+    elif [ "$TERM" = "dumb" ]; then
+        reason="Dumb terminal detected"
+    elif [ -n "$SSH_CLIENT" ] && [ -z "$SSH_TTY" ]; then
+        reason="SSH non-terminal connection detected"
+    fi
+    
+    # If any non-interactive condition is met, use default immediately
+    if [ -n "$reason" ]; then
+        log_step "🤖 $reason, using default directory"
+        echo -e "${YELLOW}🤖 $reason${NC}"
+        echo -e "${YELLOW}   Using default directory: $DEFAULT_DIR${NC}"
+        DASH_MCP_DIR="$DEFAULT_DIR"
+        return
+    fi
+    
+    # Interactive terminal - prompt for directory with timeout
+    log_step "💬 Prompting user for installation directory (10 second timeout)"
+    echo -e "${YELLOW}⏰ You have 10 seconds to respond, or the default will be used${NC}"
+    
+    if read -r -t 10 -p "Enter installation directory [${DEFAULT_DIR}]: " INPUT_DIR; then
+        DASH_MCP_DIR="${INPUT_DIR:-$DEFAULT_DIR}"
+        log_step "✅ User input received: $DASH_MCP_DIR"
+    else
+        # Timeout occurred - use default and log reason
+        reason="Input timeout after 10 seconds"
+        log_step "⏰ $reason - using default directory"
+        echo -e "${YELLOW}\n⏰ $reason${NC}"
+        echo -e "${YELLOW}   Using default directory: $DEFAULT_DIR${NC}"
+        DASH_MCP_DIR="$DEFAULT_DIR"
+    fi
+}
+
+# Execute centralized directory selection
+select_installation_directory
 
 log_step "📁 Installation directory set to: $DASH_MCP_DIR"
 SCRIPT_NAME="enhanced_dash_server.py"
