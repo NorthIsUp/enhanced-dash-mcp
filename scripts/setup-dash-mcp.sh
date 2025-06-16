@@ -33,6 +33,17 @@ log_step "🚀 Starting Enhanced Dash MCP Server setup..."
 log_step "📍 Script location: $(pwd)"
 log_step "🖥️  System: $(uname -s) $(uname -r)"
 
+# Check for macOS (Dash requirement)
+if [[ "$(uname -s)" != "Darwin" ]]; then
+    log_step "⚠️  Warning: Non-macOS system detected"
+    echo -e "${YELLOW}⚠️  Warning: This system is not macOS${NC}"
+    echo -e "${YELLOW}   Dash documentation app is macOS-only${NC}"
+    echo -e "${YELLOW}   The server will install but won't find local docsets${NC}"
+    echo -e "${YELLOW}   Consider setting up on a macOS system for full functionality${NC}"
+    echo -e "${YELLOW}   Continuing with setup for testing purposes...${NC}"
+    echo ""
+fi
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -45,8 +56,20 @@ NC='\033[0m' # No Color
 # Dash is macOS-only, so use the home directory as the base.
 DEFAULT_BASE="$HOME"
 DEFAULT_DIR="${DASH_MCP_DIR:-${DEFAULT_BASE}/enhanced-dash-mcp}"
-read -r -p "Enter installation directory [${DEFAULT_DIR}]: " INPUT_DIR
-DASH_MCP_DIR="${INPUT_DIR:-$DEFAULT_DIR}"
+
+# Check if running in an automated environment (like Codex)
+if [ -t 0 ]; then
+    # Interactive terminal - prompt for directory
+    log_step "💬 Prompting user for installation directory"
+    read -r -p "Enter installation directory [${DEFAULT_DIR}]: " INPUT_DIR
+    DASH_MCP_DIR="${INPUT_DIR:-$DEFAULT_DIR}"
+else
+    # Non-interactive environment - use default
+    log_step "🤖 Non-interactive environment detected, using default directory"
+    DASH_MCP_DIR="$DEFAULT_DIR"
+fi
+
+log_step "📁 Installation directory set to: $DASH_MCP_DIR"
 SCRIPT_NAME="enhanced_dash_server.py"
 REQUIREMENTS_FILE="requirements.txt"
 
