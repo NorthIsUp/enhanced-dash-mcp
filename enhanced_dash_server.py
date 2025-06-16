@@ -1372,5 +1372,40 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    # Run the server using asyncio and stdio_server for stream wiring
+    import sys
+    
+    # Check for test mode
+    if len(sys.argv) > 1 and sys.argv[1] == "--test":
+        # Test mode: validate setup without starting server
+        print("🧪 Enhanced Dash MCP Server - Test Mode")
+        print(f"📍 Docsets path: {DashMCPServer().docsets_path}")
+        print(f"📊 Log file: {LOG_FILE}")
+        
+        # Quick validation
+        try:
+            server_instance = DashMCPServer()
+            print(f"✅ Server initialized successfully")
+            
+            # Test docset discovery
+            import asyncio
+            async def test_docsets():
+                docsets = await server_instance.get_available_docsets()
+                print(f"📚 Found {len(docsets)} docsets")
+                if docsets:
+                    print("   Sample docsets:", [d['name'] for d in docsets[:3]])
+                return len(docsets) > 0
+            
+            has_docsets = asyncio.run(test_docsets())
+            if has_docsets:
+                print("🎉 Server test completed successfully - ready for MCP client connection")
+                sys.exit(0)
+            else:
+                print("⚠️  No docsets found - check DASH_DOCSETS_PATH or Dash installation")
+                sys.exit(1)
+                
+        except Exception as e:
+            print(f"❌ Server test failed: {e}")
+            sys.exit(1)
+    
+    # Normal mode: Run the server using asyncio and stdio_server for stream wiring
     asyncio.run(main())

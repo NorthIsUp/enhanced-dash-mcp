@@ -67,15 +67,27 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd "$SCRIPT_DIR"
 
 # Activate virtual environment
+echo "🔧 Activating virtual environment..."
 source venv/bin/activate
 
-# Start the server
-echo "🚀 Starting Enhanced Dash MCP Server..."
-echo "📍 Server location: $SCRIPT_DIR"
-echo "🔗 Connect Claude to: python3 $SCRIPT_DIR/enhanced_dash_server.py"
-echo ""
+# Test the server first (for validation and debugging)
+echo "🧪 Testing server configuration..."
+python3 enhanced_dash_server.py --test
 
-python3 enhanced_dash_server.py
+if [ $? -eq 0 ]; then
+    echo ""
+    echo "🚀 Starting Enhanced Dash MCP Server..."
+    echo "📍 Server location: $SCRIPT_DIR"
+    echo "🔗 Connect Claude to: python3 $SCRIPT_DIR/enhanced_dash_server.py"
+    echo "ℹ️  Note: Server will wait for JSON-RPC input from MCP client (Claude)"
+    echo "   Press Ctrl+C to stop the server"
+    echo ""
+    
+    python3 enhanced_dash_server.py
+else
+    echo "❌ Server test failed. Please check the configuration and try again."
+    exit 1
+fi
 EOF
 
 chmod +x start-dash-mcp.sh
@@ -97,14 +109,27 @@ if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
     exit 1
 fi
 
-# Create new tmux session
-echo "🚀 Starting Dash MCP Server in tmux session '$SESSION_NAME'..."
-tmux new-session -d -s "$SESSION_NAME" -c "$SCRIPT_DIR" './start-dash-mcp.sh'
+# Test server configuration first
+echo "🧪 Testing server configuration..."
+cd "$SCRIPT_DIR"
+source venv/bin/activate
+python3 enhanced_dash_server.py --test
 
-echo "✅ Dash MCP Server started in tmux session '$SESSION_NAME'"
-echo "🔗 Attach with: tmux attach -t $SESSION_NAME"
-echo "📋 List sessions: tmux list-sessions"
-echo "❌ Stop server: tmux kill-session -t $SESSION_NAME"
+if [ $? -eq 0 ]; then
+    # Create new tmux session
+    echo ""
+    echo "🚀 Starting Dash MCP Server in tmux session '$SESSION_NAME'..."
+    tmux new-session -d -s "$SESSION_NAME" -c "$SCRIPT_DIR" './start-dash-mcp.sh'
+    
+    echo "✅ Dash MCP Server started in tmux session '$SESSION_NAME'"
+    echo "🔗 Attach with: tmux attach -t $SESSION_NAME"
+    echo "📋 List sessions: tmux list-sessions"
+    echo "❌ Stop server: tmux kill-session -t $SESSION_NAME"
+    echo "ℹ️  Note: Server is running in background and waiting for MCP client connection"
+else
+    echo "❌ Server test failed. Please check the configuration before starting tmux session."
+    exit 1
+fi
 EOF
 
 chmod +x start-dash-mcp-tmux.sh
