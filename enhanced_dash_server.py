@@ -2046,8 +2046,10 @@ if __name__ == "__main__":
                 print("🎉 Server test completed successfully - ready for MCP client connection")
                 sys.exit(0)
             else:
-                print("⚠️  No docsets found - check DASH_DOCSETS_PATH or Dash installation")
-                sys.exit(1)
+                print("⚠️ No docsets found - check DASH_DOCSETS_PATH or Dash installation")
+                print("ℹ️  Server can still be used for testing - this is expected on non-macOS systems")
+                # Don't exit with error code since server initialization was successful
+                sys.exit(0)
                 
         except Exception as e:
             print(f"❌ Server test failed: {e}")
