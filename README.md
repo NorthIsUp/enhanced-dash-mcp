@@ -4,11 +4,26 @@
 ![Python](https://img.shields.io/badge/python-3.8+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
-See [CHANGELOG.md](CHANGELOG.md) for version history. The changelog lists
-releases in reverse chronological order so you can always view the newest
-changes first while retaining the full history.
 
-An intelligent Model Context Protocol (MCP) server that transforms your local Dash documentation into a powerful, context-aware assistant for Claude. Built for developers who want seamless access to documentation while coding.
+## 🎯 What is this?
+
+This is a **Model Context Protocol (MCP)** server that bridges [Dash](https://kapeli.com/dash) - the popular offline API documentation browser for macOS - with Claude Desktop and other agentic development environments. MCP is an open protocol that enables AI assistants like Claude and Warp to securely access local resources and tools on your computer through structured APIs.
+
+**In simple terms:** This server lets Claude and other agentic coding tools instantly search and read your local Dash documentation (200+ API docs, cheat sheets, and guides) to provide accurate, version-specific answers based on the actual documentation you have installed - all offline, private, and blazing fast.
+
+## 📚 About Dash
+
+[Dash](https://kapeli.com/dash) is an API Documentation Browser and Code Snippet Manager for macOS that gives you instant offline access to 200+ API documentation sets. It's the go-to tool for developers who want fast, searchable, offline documentation without relying on internet connectivity or dealing with slow web searches.
+
+## 🔗 Why This Integration Matters
+
+- **Offline-First**: Access all your documentation without internet connectivity
+- **Version-Specific**: Get answers based on the exact versions of libraries you have installed
+- **Privacy-Focused**: Your code context and queries never leave your machine
+- **Lightning Fast**: Sub-second searches through gigabytes of documentation
+- **Context-Aware**: Claude understands your project stack and suggests relevant docs automatically
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## 🚀 Features
 
