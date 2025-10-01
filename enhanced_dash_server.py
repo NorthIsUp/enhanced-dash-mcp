@@ -1937,7 +1937,7 @@ async def _cancel_task(task: asyncio.Task) -> None:
         await task
 
 
-async def main() -> None:
+async def amain() -> None:
     """Run the server with STDIO streams and handle cancellation."""
     # Enhanced startup with interactive mode detection and detailed logging
     logger.info("Enhanced Dash MCP server starting (logs: %s)", LOG_FILE)
@@ -2016,6 +2016,9 @@ async def main() -> None:
                 logger.info("Enhanced Dash MCP server stopped (was running in non-interactive mode)")
             return
 
+def main() -> None:
+    """Entry point for the console script."""
+    asyncio.run(amain())
 
 if __name__ == "__main__":
     import sys
@@ -2056,4 +2059,4 @@ if __name__ == "__main__":
             sys.exit(1)
     
     # Normal mode: Run the server using asyncio and stdio_server for stream wiring
-    asyncio.run(main())
+    main()
